@@ -254,7 +254,7 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
       width: 100%;
       max-width: 1480px;
       justify-content: center;
-      align-items: stretch;
+      align-items: flex-start;
     }
 
     /* Left: Interactive Canvas */
@@ -516,7 +516,8 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
       flex-direction: column;
       overflow: hidden;
       min-height: 680px;
-      height: auto;
+      height: 742px;
+      max-height: 742px;
     }
 
     /* Sidebar Tabs */
@@ -1148,6 +1149,11 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
       .canvas-column, .sidebar-column {
         max-width: 100%;
         width: 100%;
+      }
+      .sidebar-column {
+        height: auto !important;
+        max-height: none !important;
+        min-height: auto;
       }
       .tab-content {
         max-height: 600px;
@@ -2753,9 +2759,9 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
 
         // Botões de Ação
         let actionsHtml = '';
-        if (itemType === 'seed') {
-          // Item 6: mini header com 1x, 3x, Nx
-          const maxAvailable = it.dailyLimit || 10;
+        if (itemType === 'seed' || itemType === 'consumable') {
+          // Botões de compra com mini-header e 1x, 3x, Nx
+          const maxAvailable = it.dailyLimit || (itemType === 'seed' ? 10 : 3);
           const showThree = maxAvailable >= 5;
           actionsHtml = \`
             <div class="action-multi-container \${isLimitReached ? 'is-disabled' : ''}">
@@ -2763,9 +2769,9 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
                 \${isLimitReached ? 'Esgotado Hoje' : '🛒 Comprar'}
               </div>
               <div class="action-btn-row">
-                <button class="btn-subaction" \${isLimitReached ? 'disabled' : ''} onclick="buyItem('\${it.id}', \${it.price}, '\${it.name.replace(/'/g, \"\\\\'\")}', 1, 'seed')">1x</button>
-                \${showThree ? \`<button class="btn-subaction" \${isLimitReached ? 'disabled' : ''} onclick="buyItem('\${it.id}', \${it.price}, '\${it.name.replace(/'/g, \"\\\\'\")}', 3, 'seed')">3x</button>\` : ''}
-                <button class="btn-subaction" \${isLimitReached ? 'disabled' : ''} onclick="buyItem('\${it.id}', \${it.price}, '\${it.name.replace(/'/g, \"\\\\'\")}', \${maxAvailable}, 'seed')">\${maxAvailable}x</button>
+                <button class="btn-subaction" \${isLimitReached ? 'disabled' : ''} onclick="buyItem('\${it.id}', \${it.price}, '\${it.name.replace(/'/g, \"\\\\'\")}', 1, '\${itemType}')">1x</button>
+                \${showThree ? \`<button class="btn-subaction" \${isLimitReached ? 'disabled' : ''} onclick="buyItem('\${it.id}', \${it.price}, '\${it.name.replace(/'/g, \"\\\\'\")}', 3, '\${itemType}')">3x</button>\` : ''}
+                <button class="btn-subaction" \${isLimitReached ? 'disabled' : ''} onclick="buyItem('\${it.id}', \${it.price}, '\${it.name.replace(/'/g, \"\\\\'\")}', \${maxAvailable}, '\${itemType}')">\${maxAvailable}x</button>
               </div>
             </div>
           \`;
@@ -3146,6 +3152,31 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
 
     document.getElementById('btn-sell-all').addEventListener('click', sellAllCrops);
 
+    // 10. Sincronização Dinâmica da Altura da Sidebar com a Fazenda no Desktop
+    function syncSidebarHeight() {
+      const sidebar = document.querySelector('.sidebar-column');
+      const canvasCol = document.querySelector('.canvas-column');
+      if (!sidebar || !canvasCol) return;
+
+      if (window.innerWidth > 1100) {
+        const h = Math.round(canvasCol.getBoundingClientRect().height);
+        if (h > 300) {
+          sidebar.style.height = h + 'px';
+          sidebar.style.maxHeight = h + 'px';
+        }
+      } else {
+        sidebar.style.height = '';
+        sidebar.style.maxHeight = '';
+      }
+    }
+
+    if (window.ResizeObserver) {
+      const ro = new ResizeObserver(() => syncSidebarHeight());
+      const canvasColEl = document.querySelector('.canvas-column');
+      if (canvasColEl) ro.observe(canvasColEl);
+    }
+    window.addEventListener('resize', syncSidebarHeight);
+
     // Initial load
     renderSlots();
     renderDecorations();
@@ -3153,6 +3184,7 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
     renderCart();
     renderShop();
     renderSell();
+    syncSidebarHeight();
     updateResetCountdown();
     updateNotifButtonUI();
     initTimer();
