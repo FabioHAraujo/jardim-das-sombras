@@ -254,7 +254,7 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
       width: 100%;
       max-width: 1480px;
       justify-content: center;
-      align-items: flex-start;
+      align-items: stretch;
     }
 
     /* Left: Interactive Canvas */
@@ -516,6 +516,7 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
       flex-direction: column;
       overflow: hidden;
       min-height: 680px;
+      height: auto;
     }
 
     /* Sidebar Tabs */
@@ -558,7 +559,9 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
       flex-direction: column;
       gap: 1.25rem;
       overflow-y: auto;
-      max-height: 600px;
+      flex: 1;
+      min-height: 0;
+      max-height: none;
     }
     .tab-content.active {
       display: flex;
@@ -724,6 +727,234 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
     }
     .btn-action.sell-all:hover {
       background: #ffd978;
+    }
+
+    /* Itens Indisponíveis da Loja (Item 4) */
+    .item-card.shop-item-unavailable {
+      filter: grayscale(1) !important;
+      opacity: 0.55 !important;
+      background: #140f1e !important;
+      border-color: #38284d !important;
+      cursor: not-allowed !important;
+    }
+    .item-card.shop-item-unavailable * {
+      cursor: not-allowed !important;
+    }
+
+    /* Multi Action Container: Mini Header + Botoes 1x, 3x, Nx (Itens 2 e 6) */
+    .action-multi-container {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1px solid #5a3682;
+      background: #180f26;
+      margin-top: auto;
+    }
+    .action-multi-container.is-disabled {
+      border-color: #38284d;
+      opacity: 0.6;
+    }
+    .action-mini-header {
+      background: #542b82;
+      color: #fff;
+      font-size: 0.78rem;
+      font-weight: bold;
+      text-align: center;
+      padding: 0.35rem 0.5rem;
+      user-select: none;
+      letter-spacing: 0.3px;
+    }
+    .action-mini-header.disabled {
+      background: #2b1f3d;
+      color: #9f8fb3;
+    }
+    .action-btn-row {
+      display: flex;
+      width: 100%;
+      gap: 1px;
+      background: #3d235a;
+    }
+    .btn-subaction {
+      flex: 1;
+      background: #251838;
+      color: #e8d8be;
+      border: none;
+      padding: 0.45rem 0.2rem;
+      font-family: inherit;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.15s ease;
+    }
+    .btn-subaction:hover:not(:disabled) {
+      background: #6b389e;
+      color: #ffffff;
+      box-shadow: inset 0 0 8px rgba(255, 217, 120, 0.3);
+    }
+    .btn-subaction:active:not(:disabled) {
+      background: #8447c2;
+    }
+    .btn-subaction:disabled {
+      background: #171120;
+      color: #5d516d;
+      cursor: not-allowed;
+    }
+
+    /* Botao Adicionar ao Carrinho (Item 7) */
+    .btn-add-cart {
+      background: transparent;
+      border: 1px dashed #7a46ab;
+      color: #dfb2ff;
+      border-radius: 6px;
+      padding: 0.3rem 0.5rem;
+      font-family: inherit;
+      font-size: 0.76rem;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+      text-align: center;
+      transition: all 0.2s ease;
+      margin-top: 4px;
+    }
+    .btn-add-cart:hover {
+      background: rgba(122, 70, 171, 0.25);
+      border-color: #ffd978;
+      color: #ffd978;
+    }
+
+    /* Barra de Pesquisa da Loja (Item 3) */
+    .shop-search-bar {
+      margin-top: 0.5rem;
+      margin-bottom: 0.65rem;
+    }
+    .shop-search-bar input {
+      width: 100%;
+      box-sizing: border-box;
+      background: #0d0717;
+      border: 1px solid #4a2d6e;
+      border-radius: 8px;
+      padding: 0.6rem 0.85rem;
+      color: #ffd978;
+      font-family: inherit;
+      font-size: 0.85rem;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+    .shop-search-bar input:focus {
+      border-color: #ffd978;
+      box-shadow: 0 0 10px rgba(255, 217, 120, 0.25);
+    }
+    .shop-search-bar input::placeholder {
+      color: #7b6890;
+    }
+
+    /* Container do Carrinho de Compras (Item 7) */
+    .cart-container {
+      background: linear-gradient(145deg, #181024 0%, #120a1c 100%);
+      border: 1.5px solid #6b419c;
+      border-radius: 10px;
+      padding: 0.85rem;
+      margin-bottom: 0.75rem;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+    }
+    .cart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: 'Cinzel', serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #ffd978;
+      border-bottom: 1px solid #3d235a;
+      padding-bottom: 0.4rem;
+    }
+    .cart-items-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+    .cart-item-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid #332049;
+      border-radius: 6px;
+      padding: 0.35rem 0.6rem;
+      font-size: 0.82rem;
+      transition: all 0.2s ease;
+    }
+    .cart-item-row.is-exhausted {
+      opacity: 0.45;
+      filter: grayscale(1);
+      background: rgba(0, 0, 0, 0.2);
+      border-color: #261d33;
+    }
+    .cart-item-title {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 600;
+      color: #e8d8be;
+    }
+    .cart-item-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .btn-cart-minus {
+      background: #7a1f28;
+      color: #fff;
+      border: none;
+      width: 22px;
+      height: 22px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+      transition: background 0.15s;
+    }
+    .btn-cart-minus:hover {
+      background: #b52b38;
+    }
+    .btn-cart-buy {
+      background: linear-gradient(135deg, #287a4c 0%, #1e5e39 100%);
+      color: #ffffff;
+      border: 1px solid #55f3a0;
+      border-radius: 8px;
+      padding: 0.6rem 1rem;
+      font-family: inherit;
+      font-size: 0.88rem;
+      font-weight: 800;
+      cursor: pointer;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s ease;
+      box-shadow: 0 0 10px rgba(85, 243, 160, 0.2);
+    }
+    .btn-cart-buy:hover:not(:disabled) {
+      background: linear-gradient(135deg, #32965e 0%, #257547 100%);
+      box-shadow: 0 0 16px rgba(85, 243, 160, 0.4);
+    }
+    .btn-cart-buy:disabled {
+      background: #251d30;
+      border-color: #4a3860;
+      color: #8c7d9e;
+      cursor: not-allowed;
+      box-shadow: none;
     }
 
     /* Toast Notification (Top of canvas-column) */
@@ -918,6 +1149,9 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
         max-width: 100%;
         width: 100%;
       }
+      .tab-content {
+        max-height: 600px;
+      }
     }
 
     @media (max-width: 600px) {
@@ -984,6 +1218,9 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
     <div class="header-stats">
       <div class="stat-pill" title="Petalitas">
         🌱 <span id="val-coins">${status.coins.toLocaleString('pt-BR')}</span> Ptl
+      </div>
+      <div class="stat-pill save-status" id="val-save-status" style="display:none;" title="Status de salvamento">
+        ● Salvo
       </div>
       <div class="stat-pill notif-btn" id="btn-toggle-notifs" onclick="toggleNotifs()" title="Notificações do Jardim">
         <span id="notif-icon">🔔</span> <span id="notif-label">Alertas</span>
@@ -1071,6 +1308,13 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
           <span>🏪 Mercado do Covil</span>
           <small style="font-size:0.75rem; color:#55f3a0;">Saldo: <span id="shop-coins-sub">${status.coins.toLocaleString('pt-BR')}</span> Ptl</small>
         </h3>
+        <!-- Barra de Pesquisa Greedy (Item 3) -->
+        <div class="shop-search-bar">
+          <input type="text" id="shop-search-input" placeholder="🔍 Filtrar loja por nome, efeito, descrição, id..." oninput="handleShopSearch()" autocomplete="off" />
+        </div>
+        <!-- Carrinho de Compras (Item 7) -->
+        <div class="cart-container" id="shop-cart-container" style="display:none;"></div>
+        <!-- Grid de Itens da Loja -->
         <div class="items-grid" id="shop-items-list"></div>
       </div>
 
@@ -1663,39 +1907,43 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
 
     function endDrag() {
       if (!activeDrag) return;
+      const drag = activeDrag;
+      activeDrag = null; // Libera imediatamente para nunca travar o mouse
 
-      const pin = document.getElementById('decor-pin-' + activeDrag.slotIndex);
-      const decor = placedDecorations.find(d => d.slotIndex === activeDrag.slotIndex);
+      const pin = document.getElementById('decor-pin-' + drag.slotIndex);
+      const decor = placedDecorations.find(d => d.slotIndex === drag.slotIndex);
 
       if (pin) {
         pin.classList.remove('forbidden-drop');
         pin.classList.remove('is-dragging');
+        pin.style.zIndex = (drag.currentY < 570 ? 20 : 80);
       }
 
-      const isForbidden = isInsidePlantation(activeDrag.currentX, activeDrag.currentY);
-      if (isForbidden) {
-        // Snap back to starting valid position
-        if (decor) {
-          decor.x = activeDrag.startX;
-          decor.y = activeDrag.startY;
+      try {
+        const isForbidden = isInsidePlantation(drag.currentX, drag.currentY);
+        if (isForbidden) {
+          // Snap back to starting valid position
+          if (decor) {
+            decor.x = drag.startX;
+            decor.y = drag.startY;
+          }
+          if (pin) {
+            pin.style.left = (drag.startX / 1024 * 100) + '%';
+            pin.style.top = (drag.startY / 1024 * 100) + '%';
+          }
+          showToast('⚠️ Posição inválida! Não é permitido colocar enfeites sobre os canteiros.', true);
+        } else {
+          // Valid placement!
+          if (decor) {
+            decor.x = drag.currentX;
+            decor.y = drag.currentY;
+          }
+          renderDecorsList();
+          scheduleAutoSave();
         }
-        if (pin) {
-          pin.style.left = (activeDrag.startX / 1024 * 100) + '%';
-          pin.style.top = (activeDrag.startY / 1024 * 100) + '%';
-        }
-        showToast('⚠️ Posição inválida! Não é permitido colocar enfeites sobre os canteiros.', true);
-      } else {
-        // Valid placement!
-        if (decor) {
-          decor.x = activeDrag.currentX;
-          decor.y = activeDrag.currentY;
-        }
-        renderDecorsList();
-        scheduleAutoSave();
+      } catch (err) {
+        console.error('Erro no endDrag:', err);
       }
-
-      if (pin) pin.style.zIndex = (activeDrag.currentY < 570 ? 20 : 80);
-      activeDrag = null;
     }
 
     window.addEventListener('mousemove', (e) => {
@@ -1709,12 +1957,16 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
 
     window.addEventListener('mouseup', endDrag);
     window.addEventListener('touchend', endDrag);
+    window.addEventListener('touchcancel', endDrag);
 
     // 4. Auto-Save Debouncer
     function scheduleAutoSave() {
       const statusEl = document.getElementById('val-save-status');
-      statusEl.className = 'stat-pill save-status saving';
-      statusEl.innerText = '⏳ Salvando em 2s...';
+      if (statusEl) {
+        statusEl.className = 'stat-pill save-status saving';
+        statusEl.innerText = '⏳ Salvando em 2s...';
+        statusEl.style.display = 'inline-flex';
+      }
 
       if (autoSaveTimeout) clearTimeout(autoSaveTimeout);
       autoSaveTimeout = setTimeout(() => {
@@ -1727,7 +1979,10 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
       isSaving = true;
 
       const statusEl = document.getElementById('val-save-status');
-      statusEl.innerText = '💾 Salvando...';
+      if (statusEl) {
+        statusEl.innerText = '💾 Salvando...';
+        statusEl.style.display = 'inline-flex';
+      }
 
       try {
         const payload = {
@@ -1753,14 +2008,19 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
           throw new Error(err.message || 'Erro ao salvar');
         }
 
-        statusEl.className = 'stat-pill save-status';
-        statusEl.innerText = '✅ Posições Salvas!';
-        setTimeout(() => {
-          statusEl.innerText = '● Salvo';
-        }, 3000);
+        if (statusEl) {
+          statusEl.className = 'stat-pill save-status';
+          statusEl.innerText = '✅ Posições Salvas!';
+          setTimeout(() => {
+            if (statusEl) statusEl.style.display = 'none';
+          }, 3000);
+        }
+        showToast('✅ Posições dos enfeites salvas!');
       } catch (err) {
-        statusEl.className = 'stat-pill save-status saving';
-        statusEl.innerText = '❌ Erro ao salvar';
+        if (statusEl) {
+          statusEl.className = 'stat-pill save-status saving';
+          statusEl.innerText = '❌ Erro ao salvar';
+        }
         showToast('Erro ao salvar posições: ' + err.message, true);
       } finally {
         isSaving = false;
@@ -1801,21 +2061,34 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
               \${growthStr ? '<span class="meta-pill" title="Tempo de cultivo até a colheita">⏱️ ' + growthStr + '</span>' : ''}
               \${witherStr ? '<span class="meta-pill" style="color:#ff8585;" title="Tempo que a planta sobrevive pronta antes de morrer/apodrecer">💀 Morte: ' + witherStr + '</span>' : ''}
             </div>
-            <div class="item-card-actions" style="margin-top: 0.35rem;">
-              <button class="btn-action" \${canPlant ? '' : 'disabled style="opacity:0.5; cursor:not-allowed;"'} onclick="plantSeedFromInventory('\${plantId}', '\${it.name}')">
+            <div class="action-multi-container \${canPlant ? '' : 'is-disabled'}" style="margin-top: 0.35rem;">
+              <div class="action-mini-header \${canPlant ? '' : 'disabled'}">
                 \${canPlant ? '🌱 Plantar' : 'Sem Canteiro Livre'}
-              </button>
+              </div>
+              <div class="action-btn-row">
+                <button class="btn-subaction" \${canPlant ? '' : 'disabled'} onclick="plantSeedFromInventory('\${plantId}', '\${it.name.replace(/'/g, \"\\\\'\")}', 1)">1x</button>
+                <button class="btn-subaction" \${canPlant ? '' : 'disabled'} onclick="plantSeedFromInventory('\${plantId}', '\${it.name.replace(/'/g, \"\\\\'\")}', 3)">3x</button>
+                <button class="btn-subaction" \${canPlant ? '' : 'disabled'} onclick="plantSeedFromInventory('\${plantId}', '\${it.name.replace(/'/g, \"\\\\'\")}', 9)">9x</button>
+              </div>
             </div>
           </div>
         \`;
       }).join('');
     }
 
-    async function plantSeedFromInventory(plantId, plantName) {
+    async function plantSeedFromInventory(plantId, plantName, requestedQty = 1) {
       const freeSlots = currentSlots.filter(s => s.stage === 'empty' || !s.plantId || s.stage === 'withered');
       if (freeSlots.length === 0) {
         return showToast('⚠️ Todos os 9 canteiros estão ocupados! Colha plantas prontas primeiro.', true);
       }
+
+      const inv = inventoryItems.find(i => (i.type === 'seed' || !i.itemId.startsWith('crop_')) && (i.baseId === plantId || i.itemId === plantId));
+      const availableSeeds = inv ? inv.quantity : 0;
+      if (availableSeeds <= 0) {
+        return showToast('⚠️ Você não possui sementes de ' + plantName + ' na mochila!', true);
+      }
+
+      const qtyToPlant = Math.min(requestedQty, freeSlots.length, availableSeeds);
 
       try {
         const res = await fetch('/farm/' + USER_ID + '/plant', {
@@ -1824,15 +2097,14 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer ' + ADMIN_TOKEN,
           },
-          body: JSON.stringify({ itemId: plantId, amount: 1 }),
+          body: JSON.stringify({ itemId: plantId, amount: qtyToPlant }),
         });
 
         const data = await res.json();
         if (!res.ok) throw new Error(data.message || 'Falha ao plantar');
 
-        // Decrease seed in inventory cache
-        const inv = inventoryItems.find(i => (i.type === 'seed' || !i.itemId.startsWith('crop_')) && (i.baseId === plantId || i.itemId === plantId));
-        if (inv) inv.quantity = Math.max(0, inv.quantity - 1);
+        const actuallyPlanted = (data.slots && data.slots.length) || qtyToPlant;
+        if (inv) inv.quantity = Math.max(0, inv.quantity - actuallyPlanted);
 
         // Update slots visually with drop animation
         if (data.slots && data.slots.length > 0) {
@@ -1862,7 +2134,7 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
         renderSlots();
         renderInventoryTab();
         renderShop();
-        showToast('🌱 ' + plantName + ' plantada no Canteiro [' + data.slots.join(', ') + ']!', false);
+        showToast('🌱 ' + actuallyPlanted + 'x ' + plantName + ' plantada(s) com sucesso!', false);
       } catch (err) {
         showToast(err.message, true);
       }
@@ -2121,9 +2393,309 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
       }
     }
 
+    // ===== BUSCA GREEDY NA LOJA (Item 3) =====
+    let shopSearchQuery = '';
+
+    function normalizeSearchText(str) {
+      if (!str) return '';
+      return String(str)
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .replace(/[^a-z0-9]/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+    }
+
+    function handleShopSearch() {
+      const input = document.getElementById('shop-search-input');
+      shopSearchQuery = input ? input.value : '';
+      renderShop();
+    }
+
+    function itemMatchesQuery(it, tokens, itemType) {
+      if (!tokens || tokens.length === 0) return true;
+      const searchableParts = [
+        it.name,
+        it.id,
+        it.index != null ? String(it.index) : '',
+        it.description,
+        it.bonusDescription,
+        it.effect,
+        it.bonusType,
+        it.category,
+        it.tier,
+        it.color,
+        itemType === 'seed' ? 'semente' : (itemType === 'consumable' ? 'elixir consumivel' : 'enfeite decoracao')
+      ];
+      const itemText = normalizeSearchText(searchableParts.filter(Boolean).join(' '));
+      return tokens.every(tok => itemText.includes(tok));
+    }
+
+    // ===== CARRINHO DE COMPRAS DIÁRIO (Item 7) =====
+    function getCartStorageKey() {
+      return 'farm_cart_' + USER_ID;
+    }
+
+    function loadCart() {
+      const key = getCartStorageKey();
+      try {
+        const cookies = document.cookie.split(';');
+        for (let c of cookies) {
+          c = c.trim();
+          if (c.startsWith(key + '=')) {
+            const val = decodeURIComponent(c.substring(key.length + 1));
+            const parsed = JSON.parse(val);
+            if (Array.isArray(parsed)) return parsed;
+          }
+        }
+      } catch (e) {}
+
+      try {
+        const ls = localStorage.getItem(key);
+        if (ls) {
+          const parsed = JSON.parse(ls);
+          if (Array.isArray(parsed)) return parsed;
+        }
+      } catch (e) {}
+
+      return [];
+    }
+
+    function saveCart(cart) {
+      const key = getCartStorageKey();
+      const val = JSON.stringify(cart);
+      const maxAge = 365 * 24 * 60 * 60;
+      document.cookie = key + '=' + encodeURIComponent(val) + '; path=/; max-age=' + maxAge + '; SameSite=Lax';
+      try {
+        localStorage.setItem(key, val);
+      } catch (e) {}
+    }
+
+    let userCart = loadCart();
+
+    function addToCart(itemId, itemType) {
+      const existing = userCart.find(i => i.itemId === itemId);
+      if (existing) {
+        existing.quantity = (existing.quantity || 1) + 1;
+      } else {
+        userCart.push({ itemId, itemType, quantity: 1 });
+      }
+      saveCart(userCart);
+      renderCart();
+      showToast('🛒 Adicionado 1x ao carrinho!');
+    }
+
+    function decreaseCartItem(itemId) {
+      const idx = userCart.findIndex(i => i.itemId === itemId);
+      if (idx !== -1) {
+        if (userCart[idx].quantity > 1) {
+          userCart[idx].quantity -= 1;
+        } else {
+          userCart.splice(idx, 1);
+        }
+        saveCart(userCart);
+        renderCart();
+      }
+    }
+
+    function renderCart() {
+      const cartContainer = document.getElementById('shop-cart-container');
+      if (!cartContainer) return;
+
+      if (!userCart || userCart.length === 0) {
+        cartContainer.style.display = 'none';
+        cartContainer.innerHTML = '';
+        return;
+      }
+
+      cartContainer.style.display = 'flex';
+
+      let totalCost = 0;
+      let purchasableCount = 0;
+
+      const rowsHtml = userCart.map(ci => {
+        let itemMeta = null;
+        if (shopCatalog.seeds) itemMeta = shopCatalog.seeds.find(s => s.id === ci.itemId);
+        if (!itemMeta && shopCatalog.consumables) itemMeta = shopCatalog.consumables.find(c => c.id === ci.itemId);
+        if (!itemMeta && shopCatalog.decorations) itemMeta = shopCatalog.decorations.find(d => d.id === ci.itemId);
+
+        const name = itemMeta ? itemMeta.name : ci.itemId;
+        const price = itemMeta ? itemMeta.price : 0;
+        const remainingToday = itemMeta && itemMeta.remainingToday != null ? itemMeta.remainingToday : 999;
+        const isExhausted = remainingToday <= 0;
+
+        let qtyToBuy = 0;
+        let subtotal = 0;
+        if (!isExhausted) {
+          qtyToBuy = Math.min(ci.quantity, remainingToday);
+          subtotal = qtyToBuy * price;
+          totalCost += subtotal;
+          purchasableCount += qtyToBuy;
+        }
+
+        const exhaustedLabel = isExhausted
+          ? '<span style="color:#ff6b6b; font-size:11px; margin-left:6px; font-weight:normal;">(Esgotado hoje)</span>'
+          : (qtyToBuy < ci.quantity ? '<span style="color:#ffd978; font-size:11px; margin-left:6px; font-weight:normal;">(Restam ' + qtyToBuy + 'x)</span>' : '');
+
+        return \`
+          <div class="cart-item-row \${isExhausted ? 'is-exhausted' : ''}">
+            <div class="cart-item-title">
+              <span>\${name}</span>
+              \${exhaustedLabel}
+            </div>
+            <div class="cart-item-controls">
+              <span style="color:#ffd978; font-weight:700;">x\${ci.quantity}</span>
+              <span style="color:#9f8fb3; font-size:11px;">(\${price} Ptl/un)</span>
+              <button class="btn-cart-minus" onclick="decreaseCartItem('\${ci.itemId}')" title="Diminuir quantidade">−</button>
+            </div>
+          </div>
+        \`;
+      }).join('');
+
+      const isOutOfCoins = purchasableCount > 0 && currentCoins < totalCost;
+      let buyBtnText = '';
+      let buyBtnDisabled = false;
+
+      if (purchasableCount === 0) {
+        buyBtnText = '✅ Itens já comprados hoje';
+        buyBtnDisabled = true;
+      } else if (isOutOfCoins) {
+        buyBtnText = '💸 Saldo insuficiente (' + totalCost.toLocaleString('pt-BR') + ' Ptl)';
+        buyBtnDisabled = true;
+      } else {
+        buyBtnText = '🛒 Comprar Carrinho (' + totalCost.toLocaleString('pt-BR') + ' Ptl)';
+        buyBtnDisabled = false;
+      }
+
+      cartContainer.innerHTML = \`
+        <div class="cart-header">
+          <span>🛒 Carrinho de Compras Diário</span>
+          <small style="font-size:0.75rem; color:#dfb2ff;">Salvo nos seus cookies</small>
+        </div>
+        <div class="cart-items-list">
+          \${rowsHtml}
+        </div>
+        <div style="margin-top:0.35rem;">
+          <button class="btn-cart-buy" \${buyBtnDisabled ? 'disabled' : ''} onclick="buyWholeCart()">
+            \${buyBtnText}
+          </button>
+        </div>
+      \`;
+    }
+
+    async function buyWholeCart() {
+      if (!userCart || userCart.length === 0) return;
+
+      const toBuy = [];
+      let totalCost = 0;
+
+      for (const ci of userCart) {
+        let itemMeta = null;
+        let type = ci.itemType || 'seed';
+        if (shopCatalog.seeds) itemMeta = shopCatalog.seeds.find(s => s.id === ci.itemId);
+        if (!itemMeta && shopCatalog.consumables) {
+          itemMeta = shopCatalog.consumables.find(c => c.id === ci.itemId);
+          type = 'consumable';
+        }
+        if (!itemMeta && shopCatalog.decorations) {
+          itemMeta = shopCatalog.decorations.find(d => d.id === ci.itemId);
+          type = 'decor';
+        }
+
+        if (!itemMeta) continue;
+        const remainingToday = itemMeta.remainingToday != null ? itemMeta.remainingToday : 999;
+        if (remainingToday <= 0) continue;
+
+        const qty = Math.min(ci.quantity, remainingToday);
+        if (qty > 0) {
+          toBuy.push({
+            itemId: ci.itemId,
+            unitPrice: itemMeta.price,
+            name: itemMeta.name,
+            quantity: qty,
+            itemType: type,
+            itemMeta,
+          });
+          totalCost += qty * itemMeta.price;
+        }
+      }
+
+      if (toBuy.length === 0) {
+        return showToast('Todos os itens do carrinho já foram comprados hoje!', true);
+      }
+
+      if (currentCoins < totalCost) {
+        return showToast('Petalitas insuficientes para comprar o carrinho! Necessário: ' + totalCost.toLocaleString('pt-BR') + ' Ptl', true);
+      }
+
+      let boughtItemsCount = 0;
+      let errors = [];
+
+      for (const item of toBuy) {
+        try {
+          const res = await fetch('/shop/buy/' + USER_ID, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer ' + ADMIN_TOKEN,
+            },
+            body: JSON.stringify({ itemId: item.itemId, quantity: item.quantity }),
+          });
+
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.message || 'Falha ao comprar ' + item.name);
+
+          currentCoins = data.remainingCoins;
+          updateCoinsDisplay();
+
+          if (item.itemMeta && item.itemMeta.remainingToday != null) {
+            item.itemMeta.remainingToday = Math.max(0, item.itemMeta.remainingToday - item.quantity);
+          }
+
+          const existing = inventoryItems.find(i => i.itemId === item.itemId);
+          if (existing) {
+            existing.quantity += item.quantity;
+          } else {
+            inventoryItems.push({
+              itemId: item.itemId,
+              baseId: item.itemId,
+              catalogIndex: item.itemMeta.index,
+              name: item.name,
+              type: item.itemType === 'decor' ? 'decoration' : (item.itemType === 'consumable' ? 'consumable' : 'seed'),
+              quantity: item.quantity,
+              growthTimeSeconds: item.itemMeta.growthTimeSeconds,
+              witherTimeSeconds: item.itemMeta.witherTimeSeconds,
+              spriteName: item.itemMeta.spriteName ? item.itemMeta.spriteName + '.png' : (item.itemId + '.png'),
+              color: item.itemMeta.color,
+              description: item.itemMeta.description,
+            });
+          }
+
+          boughtItemsCount += item.quantity;
+        } catch (err) {
+          errors.push(item.name + ': ' + err.message);
+        }
+      }
+
+      // NÃO LIMPA O CARRINHO! Apenas atualiza status visual
+      renderCart();
+      renderShop();
+      renderInventoryTab();
+
+      if (errors.length > 0) {
+        showToast('⚠️ Parcialmente concluído: ' + errors.join('; '), true);
+      } else {
+        showToast('✅ Carrinho comprado com sucesso! (' + boughtItemsCount + ' itens)', false);
+      }
+    }
+
     // 6. Shop Tab Rendering and Actions
     function renderShop() {
       const container = document.getElementById('shop-items-list');
+      if (!container) return;
+
+      renderCart(); // Mantém o carrinho sincronizado
 
       function getItemOwnedCount(itemId) {
         const inv = inventoryItems.find(i => i.itemId === itemId);
@@ -2137,7 +2709,15 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
 
       function buildCard(it, itemType) {
         const owned = getItemOwnedCount(it.id);
-        const cardClass = 'item-card ' + (itemType === 'seed' ? 'type-seed' : (itemType === 'decor' ? 'type-decor' : 'type-consumable')) + (owned > 0 ? ' owned' : '');
+        const isLimitReached = it.remainingToday != null && it.remainingToday <= 0;
+        const isDecorUnavailable = itemType === 'decor' && owned >= 1;
+        const isUnavailable = isLimitReached || isDecorUnavailable;
+
+        let cardClass = 'item-card ' + (itemType === 'seed' ? 'type-seed' : (itemType === 'decor' ? 'type-decor' : 'type-consumable')) + (owned > 0 ? ' owned' : '');
+        if (isUnavailable) {
+          cardClass += ' shop-item-unavailable';
+        }
+
         const thumbSrc = itemType === 'seed'
           ? '/farm/sprites/plants/' + it.id + '_ready.png'
           : (itemType === 'decor'
@@ -2147,8 +2727,6 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
         const ownedBadgeHtml = owned > 0
           ? '<div class="item-card-owned-badge">🎒 Possui: <strong>' + owned + 'x</strong></div>'
           : '';
-
-        const isLimitReached = it.remainingToday != null && it.remainingToday <= 0;
 
         let pillsHtml = '';
         if (itemType === 'seed') {
@@ -2173,6 +2751,41 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
 
         const descHtml = it.description ? ('<div class="item-desc">' + it.description + '</div>') : '';
 
+        // Botões de Ação
+        let actionsHtml = '';
+        if (itemType === 'seed') {
+          // Item 6: mini header com 1x, 3x, Nx
+          const maxAvailable = it.dailyLimit || 10;
+          const showThree = maxAvailable >= 5;
+          actionsHtml = \`
+            <div class="action-multi-container \${isLimitReached ? 'is-disabled' : ''}">
+              <div class="action-mini-header \${isLimitReached ? 'disabled' : ''}">
+                \${isLimitReached ? 'Esgotado Hoje' : '🛒 Comprar'}
+              </div>
+              <div class="action-btn-row">
+                <button class="btn-subaction" \${isLimitReached ? 'disabled' : ''} onclick="buyItem('\${it.id}', \${it.price}, '\${it.name.replace(/'/g, \"\\\\'\")}', 1, 'seed')">1x</button>
+                \${showThree ? \`<button class="btn-subaction" \${isLimitReached ? 'disabled' : ''} onclick="buyItem('\${it.id}', \${it.price}, '\${it.name.replace(/'/g, \"\\\\'\")}', 3, 'seed')">3x</button>\` : ''}
+                <button class="btn-subaction" \${isLimitReached ? 'disabled' : ''} onclick="buyItem('\${it.id}', \${it.price}, '\${it.name.replace(/'/g, \"\\\\'\")}', \${maxAvailable}, 'seed')">\${maxAvailable}x</button>
+              </div>
+            </div>
+          \`;
+        } else {
+          actionsHtml = \`
+            <div class="item-card-actions">
+              <button class="btn-action" \${isUnavailable ? 'disabled style="opacity:0.4; cursor:not-allowed;"' : ''} onclick="buyItem('\${it.id}', \${it.price}, '\${it.name.replace(/'/g, \"\\\\'\")}', 1, '\${itemType}')">
+                \${isUnavailable ? (isDecorUnavailable ? 'Já Adquirido' : 'Esgotado Hoje') : 'Comprar'}
+              </button>
+            </div>
+          \`;
+        }
+
+        // Item 7: Logo abaixo do container "Possui: 3x": Botão simples "+ Carrinho"
+        const cartBtnHtml = \`
+          <button class="btn-add-cart" onclick="addToCart('\${it.id}', '\${itemType}')" title="Adicionar 1x ao carrinho de compras">
+            + Carrinho
+          </button>
+        \`;
+
         return \`
           <div class="\${cardClass}">
             <div class="item-card-header">
@@ -2184,32 +2797,60 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
             </div>
             \${descHtml}
             \${pillsHtml}
-            <div class="item-card-actions">
-              <button class="btn-action" \${isLimitReached ? 'disabled style="opacity:0.4; cursor:not-allowed;"' : ''} onclick="buyItem('\${it.id}', \${it.price}, '\${it.name}', 1, '\${itemType}')">
-                \${isLimitReached ? 'Esgotado Hoje' : 'Comprar'}
-              </button>
-            </div>
+            \${actionsHtml}
             \${ownedBadgeHtml}
+            \${cartBtnHtml}
           </div>
         \`;
       }
 
-      const seedsHtml = (shopCatalog.seeds || []).map(s => buildCard(s, 'seed')).join('');
-      const consumablesHtml = (shopCatalog.consumables || []).map(c => buildCard(c, 'consumable')).join('');
-      const decorsHtml = (shopCatalog.decorations || []).map(d => buildCard(d, 'decor')).join('');
+      // Filtragem Greedy (Item 3)
+      const tokens = normalizeSearchText(shopSearchQuery).split(' ').filter(Boolean);
+      const filteredSeeds = (shopCatalog.seeds || []).filter(s => itemMatchesQuery(s, tokens, 'seed'));
+      const filteredConsumables = (shopCatalog.consumables || []).filter(c => itemMatchesQuery(c, tokens, 'consumable'));
+      const filteredDecors = (shopCatalog.decorations || []).filter(d => itemMatchesQuery(d, tokens, 'decor'));
 
-      container.innerHTML = \`
-        <div class="shop-category-header seeds">🌱 Sementes de Cultivo</div>
-        \${seedsHtml}
-        \${consumablesHtml ? '<div class="shop-category-header consumables" style="color:#dfb2ff; background:rgba(122,62,157,0.2); border-left:4px solid #9d5ec2;">⚗️ Consumíveis & Elixires</div>' + consumablesHtml : ''}
-        <div class="shop-category-header decorations">🏛️ Enfeites e Decorações</div>
-        \${decorsHtml}
-      \`;
+      const seedsHtml = filteredSeeds.map(s => buildCard(s, 'seed')).join('');
+      const consumablesHtml = filteredConsumables.map(c => buildCard(c, 'consumable')).join('');
+      const decorsHtml = filteredDecors.map(d => buildCard(d, 'decor')).join('');
+
+      let finalHtml = '';
+      if (filteredSeeds.length > 0) {
+        finalHtml += '<div class="shop-category-header seeds">🌱 Sementes de Cultivo</div>' + seedsHtml;
+      }
+      if (filteredConsumables.length > 0) {
+        finalHtml += '<div class="shop-category-header consumables" style="color:#dfb2ff; background:rgba(122,62,157,0.2); border-left:4px solid #9d5ec2;">⚗️ Consumíveis & Elixires</div>' + consumablesHtml;
+      }
+      if (filteredDecors.length > 0) {
+        finalHtml += '<div class="shop-category-header decorations">🏛️ Enfeites e Decorações</div>' + decorsHtml;
+      }
+      if (!finalHtml) {
+        finalHtml = '<p style="color:#8c7d9e; font-size:13px; grid-column:1/-1; padding:2rem 0; text-align:center;">Nenhum item encontrado na loja para essa busca.</p>';
+      }
+
+      container.innerHTML = finalHtml;
     }
 
-    async function buyItem(itemId, totalCost, itemName, qty = 1, itemType = 'seed') {
+    async function buyItem(itemId, unitPrice, itemName, requestedQty = 1, itemType = 'seed') {
+      let targetItem = null;
+      if (itemType === 'seed' && shopCatalog.seeds) {
+        targetItem = shopCatalog.seeds.find(x => x.id === itemId);
+      } else if (itemType === 'consumable' && shopCatalog.consumables) {
+        targetItem = shopCatalog.consumables.find(x => x.id === itemId);
+      }
+
+      // Se tem limite diário, calcula a quantia real disponível que o usuário pode comprar
+      let actualQty = requestedQty;
+      if (targetItem && targetItem.remainingToday != null) {
+        if (targetItem.remainingToday <= 0) {
+          return showToast('Limite diário já atingido para ' + itemName + '!', true);
+        }
+        actualQty = Math.min(requestedQty, targetItem.remainingToday);
+      }
+
+      const totalCost = unitPrice * actualQty;
       if (currentCoins < totalCost) {
-        return showToast('Petalitas insuficientes para comprar ' + itemName + '!', true);
+        return showToast('Petalitas insuficientes para comprar ' + actualQty + 'x ' + itemName + '! Necessário: ' + totalCost.toLocaleString('pt-BR') + ' Ptl', true);
       }
 
       try {
@@ -2219,7 +2860,7 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer ' + ADMIN_TOKEN,
           },
-          body: JSON.stringify({ itemId, quantity: qty }),
+          body: JSON.stringify({ itemId, quantity: actualQty }),
         });
 
         const data = await res.json();
@@ -2231,17 +2872,17 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
         // Update remainingToday in catalog cache
         if (shopCatalog.seeds) {
           const s = shopCatalog.seeds.find(x => x.id === itemId);
-          if (s) s.remainingToday = Math.max(0, s.remainingToday - qty);
+          if (s) s.remainingToday = Math.max(0, s.remainingToday - actualQty);
         }
         if (shopCatalog.consumables) {
           const c = shopCatalog.consumables.find(x => x.id === itemId);
-          if (c) c.remainingToday = Math.max(0, c.remainingToday - qty);
+          if (c) c.remainingToday = Math.max(0, c.remainingToday - actualQty);
         }
 
         // Update inventory cache
         const existing = inventoryItems.find(i => i.itemId === itemId);
         if (existing) {
-          existing.quantity += qty;
+          existing.quantity += actualQty;
         } else {
           let catalogMeta = null;
           if (itemType === 'seed' && shopCatalog.seeds) catalogMeta = shopCatalog.seeds.find(x => x.id === itemId);
@@ -2253,7 +2894,7 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
             catalogIndex: catalogMeta ? catalogMeta.index : undefined,
             name: itemName,
             type: itemType === 'decor' ? 'decoration' : (itemType === 'consumable' ? 'consumable' : 'seed'),
-            quantity: qty,
+            quantity: actualQty,
             growthTimeSeconds: catalogMeta?.growthTimeSeconds,
             witherTimeSeconds: catalogMeta?.witherTimeSeconds,
             spriteName: catalogMeta?.spriteName ? catalogMeta.spriteName + '.png' : (itemId + '.png'),
@@ -2264,7 +2905,7 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
 
         renderInventoryTab();
         renderShop();
-        showToast('✅ Comprou ' + qty + 'x ' + itemName + ' por ' + totalCost.toLocaleString('pt-BR') + ' Ptl!');
+        showToast('✅ Comprou ' + actualQty + 'x ' + itemName + ' por ' + totalCost.toLocaleString('pt-BR') + ' Ptl!');
       } catch (err) {
         showToast(err.message, true);
       }
@@ -2509,6 +3150,7 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
     renderSlots();
     renderDecorations();
     renderInventoryTab();
+    renderCart();
     renderShop();
     renderSell();
     updateResetCountdown();
