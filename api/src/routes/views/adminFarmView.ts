@@ -2760,18 +2760,33 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
         // Botões de Ação
         let actionsHtml = '';
         if (itemType === 'seed' || itemType === 'consumable') {
-          // Botões de compra com mini-header e 1x, 3x, Nx
+          // Botões de compra com mini-header: 1x se limite=1; 1x e Nx se limite<5; 1x, 3x e Nx se limite>=5
           const maxAvailable = it.dailyLimit || (itemType === 'seed' ? 10 : 3);
-          const showThree = maxAvailable >= 5;
+          let btnsHtml = '';
+          if (maxAvailable === 1) {
+            btnsHtml = \`
+              <button class="btn-subaction" \${isLimitReached ? 'disabled' : ''} onclick="buyItem('\${it.id}', \${it.price}, '\${it.name.replace(/'/g, \"\\\\'\")}', 1, '\${itemType}')">1x</button>
+            \`;
+          } else if (maxAvailable < 5) {
+            btnsHtml = \`
+              <button class="btn-subaction" \${isLimitReached ? 'disabled' : ''} onclick="buyItem('\${it.id}', \${it.price}, '\${it.name.replace(/'/g, \"\\\\'\")}', 1, '\${itemType}')">1x</button>
+              <button class="btn-subaction" \${isLimitReached ? 'disabled' : ''} onclick="buyItem('\${it.id}', \${it.price}, '\${it.name.replace(/'/g, \"\\\\'\")}', \${maxAvailable}, '\${itemType}')">\${maxAvailable}x</button>
+            \`;
+          } else {
+            btnsHtml = \`
+              <button class="btn-subaction" \${isLimitReached ? 'disabled' : ''} onclick="buyItem('\${it.id}', \${it.price}, '\${it.name.replace(/'/g, \"\\\\'\")}', 1, '\${itemType}')">1x</button>
+              <button class="btn-subaction" \${isLimitReached ? 'disabled' : ''} onclick="buyItem('\${it.id}', \${it.price}, '\${it.name.replace(/'/g, \"\\\\'\")}', 3, '\${itemType}')">3x</button>
+              <button class="btn-subaction" \${isLimitReached ? 'disabled' : ''} onclick="buyItem('\${it.id}', \${it.price}, '\${it.name.replace(/'/g, \"\\\\'\")}', \${maxAvailable}, '\${itemType}')">\${maxAvailable}x</button>
+            \`;
+          }
+
           actionsHtml = \`
             <div class="action-multi-container \${isLimitReached ? 'is-disabled' : ''}">
               <div class="action-mini-header \${isLimitReached ? 'disabled' : ''}">
                 \${isLimitReached ? 'Esgotado Hoje' : '🛒 Comprar'}
               </div>
               <div class="action-btn-row">
-                <button class="btn-subaction" \${isLimitReached ? 'disabled' : ''} onclick="buyItem('\${it.id}', \${it.price}, '\${it.name.replace(/'/g, \"\\\\'\")}', 1, '\${itemType}')">1x</button>
-                \${showThree ? \`<button class="btn-subaction" \${isLimitReached ? 'disabled' : ''} onclick="buyItem('\${it.id}', \${it.price}, '\${it.name.replace(/'/g, \"\\\\'\")}', 3, '\${itemType}')">3x</button>\` : ''}
-                <button class="btn-subaction" \${isLimitReached ? 'disabled' : ''} onclick="buyItem('\${it.id}', \${it.price}, '\${it.name.replace(/'/g, \"\\\\'\")}', \${maxAvailable}, '\${itemType}')">\${maxAvailable}x</button>
+                \${btnsHtml}
               </div>
             </div>
           \`;
