@@ -1,0 +1,76 @@
+services:
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    container_name: jardim-api
+    restart: unless-stopped
+    ports:
+      - "${PORT:-3040}:3040"
+    environment:
+      - NODE_ENV=production
+      - PORT=3040
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-jardim}:${POSTGRES_PASSWORD:-jardim_secret_pass_123}@postgres:5432/${POSTGRES_DB:-jardim_das_sombras}?schema=public
+      - API_KEY=${API_KEY}
+      - ASSETS_PATH=/app/assets
+      - DATA_PATH=/app/data
+      - SUPER_ADMIN_PASSWORD=${SUPER_ADMIN_PASSWORD:-}
+      - CORS_ORIGINS=*
+      - PUBLIC_URL=${PUBLIC_URL:-http://localhost:3040}
+      - BOT_API_URL=${BOT_API_URL:-}
+      - BOT_API_TOKEN=${BOT_API_TOKEN:-}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ./assets:/app/assets
+      - ./data:/app/data
+      - ./api/prisma:/app/prisma
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - jardim-net
+
+  bot:
+    build:
+      context: ./bot
+      dockerfile: Dockerfile
+    container_name: jardim-bot
+    profiles:
+      - test
+    restart: unless-stopped
+    environment:
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - API_URL=http://api:3040
+      - API_KEY=${API_KEY}
+    depends_on:
+      - api
+    networks:
+      - jardim-net
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: jardim-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-jardim}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-jardim_secret_pass_123}
+      POSTGRES_DB: ${POSTGRES_DB:-jardim_das_sombras}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "127.0.0.1:${POSTGRES_PORT:-5434}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-jardim} -d ${POSTGRES_DB:-jardim_das_sombras}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - jardim-net
+
+volumes:
+  postgres_data:
+
+networks:
+  jardim-net:
+    driver: bridge

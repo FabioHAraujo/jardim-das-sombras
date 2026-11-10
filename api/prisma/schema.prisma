@@ -1,0 +1,124 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Player {
+  id              String             @id // ID do usuário no Telegram/WhatsApp
+  uuid            String             @unique @default(uuid()) // UUID público para compartilhamento de link da fazenda
+  farmName        String?            @map("farm_name")
+  playerName      String?            @map("player_name")
+  coins           Int                @default(500)
+  createdAt       DateTime           @default(now())
+  lastDailyAt     DateTime?          // Controle da Sacola do Coveiro
+  
+  // Estatísticas acumuladas
+  totalPlanted    Int                @default(0)
+  totalHarvested  Int                @default(0)
+  totalWithered   Int                @default(0)
+
+  slots           FarmSlot[]
+  decorations     PlayerDecoration[]
+  inventory       Inventory[]
+  purchases       DailyPurchase[]
+  buffs           PlayerBuff[]
+  harvestTotals   CropHarvestTotal[]
+
+  @@index([coins(sort: Desc)])
+  @@index([totalHarvested(sort: Desc)])
+  @@map("players")
+}
+
+model FarmSlot {
+  id          Int       @id @default(autoincrement())
+  playerId    String
+  player      Player    @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  slotIndex   Int       // 1 a 9
+  plantId     String?   // ex: "01_nightshade" ou null se vazio
+  stage       String    @default("empty") // "empty" | "seed" | "growing" | "ready" | "withered"
+  plantedAt   DateTime?
+  harvestAt   DateTime? // Quando fica pronta
+  witherAt    DateTime? // Quando apodrece/morre
+
+  @@unique([playerId, slotIndex])
+  @@map("farm_slots")
+}
+
+model PlayerDecoration {
+  id          Int       @id @default(autoincrement())
+  playerId    String
+  player      Player    @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  slotIndex   Int       // 1 a 10 (identificador do enfeite equipado)
+  decorId     String    // ex: "decor_18_fallen_angel_statues"
+  x           Int?      // Coordenada horizontal no canvas (0 a 1024)
+  y           Int?      // Coordenada vertical no canvas (0 a 1024)
+
+  @@unique([playerId, slotIndex])
+  @@map("player_decorations")
+}
+
+model Inventory {
+  id        Int     @id @default(autoincrement())
+  playerId  String
+  player    Player  @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  itemId    String  // ID da semente ou item de decoração
+  quantity  Int     @default(0)
+
+  @@unique([playerId, itemId])
+  @@map("inventories")
+}
+
+// Total colhido por planta, cumulativo desde a implantação (2026-10-20).
+// Fonte de verdade do evento "colheita" para o bot creditar bônus (iscas/rolls/chips)
+// sem depender do estoque, que muda com venda.
+model CropHarvestTotal {
+  id             Int      @id @default(autoincrement())
+  playerId       String
+  player         Player   @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  itemId         String   // ex: "crop_08_devouring_root_v2"
+  totalHarvested Int      @default(0)
+  updatedAt      DateTime @updatedAt
+
+  @@unique([playerId, itemId])
+  @@index([playerId])
+  @@map("crop_harvest_totals")
+}
+
+model GlobalShopLimit {
+  itemId      String   @id
+  maxPerDay   Int
+  currentSold Int      @default(0)
+  lastResetAt DateTime @default(now())
+
+  @@map("global_shop_limits")
+}
+
+model DailyPurchase {
+  id        Int      @id @default(autoincrement())
+  playerId  String
+  player    Player   @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  itemId    String
+  quantity  Int
+  date      DateTime @db.Date
+
+  @@unique([playerId, itemId, date])
+  @@map("daily_purchases")
+}
+
+model PlayerBuff {
+  id          Int       @id @default(autoincrement())
+  playerId    String
+  player      Player    @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  type        String    // "growth_time" | "coin_multiplier" | "wither_freeze" | "daily_bag_luck" | "daily_bag_bonus"
+  value       Float     // ex: 0.5 (multiplicador) ou 0.05 / 0.10 (aditivo)
+  expiresAt   DateTime? // null = permanente | DateTime = temporário
+  source      String?   // ex: "midas_tear", "void_nectar", "liquid_ashes", "spectral_sigh", "admin_bonus"
+  createdAt   DateTime  @default(now())
+
+  @@index([playerId, type])
+  @@map("player_buffs")
+}

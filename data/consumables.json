@@ -1,0 +1,101 @@
+[
+  {
+    "index": 31,
+    "id": "blood_ruby",
+    "name": "Rubi Sanguíneo",
+    "color": "Vermelho Vivo",
+    "effect": "instant_finish_max_timer",
+    "description": "Finaliza o crescimento da planta com maior tempo restante.",
+    "price": 1000,
+    "dailyLimit": 10,
+    "spriteName": "blood_ruby"
+  },
+  {
+    "index": 32,
+    "id": "niflheim_frost",
+    "name": "Geada de Niflheim",
+    "color": "Azul Glacial",
+    "effect": "freeze_wither_24h",
+    "description": "Congela o tempo de wither (morte) das plantas por 24h.",
+    "price": 1500,
+    "dailyLimit": 5,
+    "spriteName": "niflheim_frost"
+  },
+  {
+    "index": 33,
+    "id": "styx_essence",
+    "name": "Essência do Estige",
+    "color": "Verde Tóxico",
+    "effect": "instant_finish_all",
+    "description": "Finaliza instantaneamente o crescimento de todas as plantas.",
+    "price": 10000,
+    "dailyLimit": 5,
+    "spriteName": "styx_essence"
+  },
+  {
+    "index": 34,
+    "id": "void_nectar",
+    "name": "Néctar do Vazio",
+    "color": "Roxo Profundo",
+    "effect": "buff_growth_speed_half_24h",
+    "description": "Reduz o tempo de crescimento das plantas pela metade durante 24 horas.",
+    "price": 10000,
+    "dailyLimit": 5,
+    "spriteName": "void_nectar"
+  },
+  {
+    "index": 35,
+    "id": "midas_tear",
+    "name": "Lágrima de Midas",
+    "color": "Amarelo/Dourado",
+    "effect": "bonus_coins_permanent_10p",
+    "description": "Aumenta permanentemente as petalitas obtidas em +10% (cumulativo).",
+    "price": 0,
+    "dailyLimit": 0,
+    "spriteName": "midas_tear"
+  },
+  {
+    "index": 36,
+    "id": "gargoyle_bile",
+    "name": "Bílis de Gárgula",
+    "color": "Preto/Cinza Escuro",
+    "effect": "none",
+    "description": "Substância viscosa ancestral. Seu uso ainda é um mistério.",
+    "price": 0,
+    "dailyLimit": 0,
+    "spriteName": "gargoyle_bile"
+  },
+  {
+    "index": 37,
+    "id": "spectral_sigh",
+    "name": "Suspiro Espectral",
+    "color": "Branco/Prateado",
+    "effect": "bonus_growth_speed_permanent_5p",
+    "description": "Reduz permanentemente o tempo de crescimento em 5% (cumulativo, máx 75%).",
+    "price": 0,
+    "dailyLimit": 0,
+    "spriteName": "spectral_sigh"
+  },
+  {
+    "index": 38,
+    "id": "liquid_ashes",
+    "name": "Cinzas Líquidas",
+    "color": "Laranja/Fogo",
+    "effect": "bonus_daily_luck_permanent_5p",
+    "description": "Aumenta permanentemente em 5% a chance de itens especiais na Sacola diária.",
+    "price": 0,
+    "dailyLimit": 0,
+    "spriteName": "liquid_ashes"
+  },
+  {
+    "index": 39,
+    "id": "widows_filter",
+    "name": "Filtro da Viúva",
+    "color": "Rosa/Magenta",
+    "effect": "buff_double_daily_drop_7d",
+    "description": "Dobra a chance de itens especiais na Sacola diária durante 7 dias.",
+    "price": 20000,
+    "dailyLimit": 1,
+    "spriteName": "widows_filter"
+  }
+]

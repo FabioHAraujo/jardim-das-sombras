@@ -1,0 +1,33 @@
+{
+  "gameName": "Jardim Lutoso",
+  "gameEmoji": "🦇",
+  "ecosystem": "Ecossistema Taciturno",
+  "publicPage": {
+    "title": "{gameName} — Cultivo Vil",
+    "ogTitle": "{gameEmoji} {gameName}",
+    "ogDescription": "Contemple este santuário de cultivo sombrio com {coins} petalitas e {harvests} colheitas.",
+    "footer": "{gameName} • {ecosystem}",
+    "notFound": "Nenhuma fazenda informada. Utilize um link de compartilhamento válido."
+  },
+  "emojis": {
+    "coins": "🌱",
+    "harvests": "🌾",
+    "withered": "💀",
+    "empty": "🟫",
+    "seed": "🌰",
+    "growing": "🌱",
+    "ready": "✨"
+  },
+  "tooltips": {
+    "ready": "Pronta",
+    "seed": "{time}",
+    "growing": "{time}",
+    "withered": "Morreu",
+    "harvested": "Colhido!",
+    "planted": "Plantada!"
+  },
+  "bot": {
+    "farmTitle": "{gameEmoji} *{gameName} de @{username}*",
+    "welcome": "{gameEmoji} *Bem-vindo ao {gameName}!*"
+  }
+}

@@ -1,0 +1,246 @@
+[
+  {
+    "index": 13,
+    "id": "decor_01_dark_mossy_boulders",
+    "name": "Pedregulhos com Musgo Sombrio",
+    "tier": "simples",
+    "price": 500000,
+    "sellPrice": 250000,
+    "spriteName": "decor_01_dark_mossy_boulders"
+  },
+  {
+    "index": 14,
+    "id": "decor_02_melted_candle_clusters",
+    "name": "Aglomerados de Velas Derretidas",
+    "tier": "simples",
+    "price": 500000,
+    "sellPrice": 250000,
+    "spriteName": "decor_02_melted_candle_clusters"
+  },
+  {
+    "index": 15,
+    "id": "decor_03_forgotten_bones_skulls",
+    "name": "Ossos e Crânios Esquecidos",
+    "tier": "simples",
+    "price": 500000,
+    "sellPrice": 250000,
+    "spriteName": "decor_03_forgotten_bones_skulls"
+  },
+  {
+    "index": 16,
+    "id": "decor_04_rotten_wood_signposts",
+    "name": "Placas de Madeira Podre",
+    "tier": "simples",
+    "price": 500000,
+    "sellPrice": 250000,
+    "spriteName": "decor_04_rotten_wood_signposts"
+  },
+  {
+    "index": 17,
+    "id": "decor_05_necrotic_mushroom_patches",
+    "name": "Cogumelos Necróticos",
+    "tier": "simples",
+    "price": 500000,
+    "sellPrice": 250000,
+    "spriteName": "decor_05_necrotic_mushroom_patches"
+  },
+  {
+    "index": 18,
+    "id": "decor_06_styx_puddles",
+    "name": "Poças do Estige",
+    "tier": "simples",
+    "price": 500000,
+    "sellPrice": 250000,
+    "spriteName": "decor_06_styx_puddles"
+  },
+  {
+    "index": 19,
+    "id": "decor_07_broken_iron_lanterns",
+    "name": "Lampiões de Ferro Quebrados",
+    "tier": "medio",
+    "price": 1500000,
+    "sellPrice": 750000,
+    "spriteName": "decor_07_broken_iron_lanterns"
+  },
+  {
+    "index": 20,
+    "id": "decor_08_shale_tombstones",
+    "name": "Lápides de Xisto",
+    "tier": "medio",
+    "price": 1500000,
+    "sellPrice": 750000,
+    "spriteName": "decor_08_shale_tombstones"
+  },
+  {
+    "index": 21,
+    "id": "decor_09_cursed_iron_fences",
+    "name": "Cercas de Ferro Amaldiçoadas",
+    "tier": "medio",
+    "price": 1500000,
+    "sellPrice": 750000,
+    "spriteName": "decor_09_cursed_iron_fences"
+  },
+  {
+    "index": 22,
+    "id": "decor_10_cracked_canopic_urns",
+    "name": "Vasos Canópicos Rachados",
+    "tier": "medio",
+    "price": 1500000,
+    "sellPrice": 750000,
+    "spriteName": "decor_10_cracked_canopic_urns"
+  },
+  {
+    "index": 23,
+    "id": "decor_11_grave_diggers_wheelbarrow",
+    "name": "Carrinho do Coveiro",
+    "tier": "medio",
+    "price": 1500000,
+    "sellPrice": 750000,
+    "spriteName": "decor_11_grave_diggers_wheelbarrow"
+  },
+  {
+    "index": 24,
+    "id": "decor_12_creepy_scarecrows",
+    "name": "Espantalhos Assustadores",
+    "tier": "medio",
+    "price": 1500000,
+    "sellPrice": 750000,
+    "spriteName": "decor_12_creepy_scarecrows"
+  },
+  {
+    "index": 25,
+    "id": "decor_13_watcher_gargoyles",
+    "name": "Gárgulas Vigias",
+    "tier": "complexo",
+    "price": 6660000,
+    "sellPrice": 3330000,
+    "spriteName": "decor_13_watcher_gargoyles"
+  },
+  {
+    "index": 26,
+    "id": "decor_14_obsidian_altars",
+    "name": "Altares de Obsidiana",
+    "tier": "complexo",
+    "price": 6660000,
+    "sellPrice": 3330000,
+    "spriteName": "decor_14_obsidian_altars"
+  },
+  {
+    "index": 27,
+    "id": "decor_15_gothic_fountains",
+    "name": "Fontes Góticas de Sangue/Névoa",
+    "tier": "complexo",
+    "price": 6660000,
+    "sellPrice": 3330000,
+    "spriteName": "decor_15_gothic_fountains"
+  },
+  {
+    "index": 28,
+    "id": "decor_16_twisted_dead_trees",
+    "name": "Árvores Retorcidas Menores",
+    "tier": "complexo",
+    "price": 6660000,
+    "sellPrice": 3330000,
+    "spriteName": "decor_16_twisted_dead_trees"
+  },
+  {
+    "index": 29,
+    "id": "decor_17_minor_mist_portals",
+    "name": "Portais de Névoa Menores",
+    "tier": "complexo",
+    "price": 6660000,
+    "sellPrice": 3330000,
+    "spriteName": "decor_17_minor_mist_portals"
+  },
+  {
+    "key": "decor_18_fallen_angel_statues",
+    "index": 30,
+    "id": "decor_30_fallen_angel_statues",
+    "name": "Estátuas de Anjos Caídos",
+    "tier": "complexo",
+    "price": 6660000,
+    "sellPrice": 3330000,
+    "spriteName": "decor_18_fallen_angel_statues"
+  },
+  {
+    "index": 40,
+    "id": "decor_19_fallen_king_crown",
+    "name": "Coroa do Rei Caído",
+    "tier": "oculto",
+    "price": 0,
+    "sellPrice": 0,
+    "spriteName": "decor_19_fallen_king_crown"
+  },
+  {
+    "index": 41,
+    "id": "decor_20_blood_diamond_cluster",
+    "name": "Aglomerado de Diamantes Sanguíneos",
+    "tier": "oculto",
+    "price": 0,
+    "sellPrice": 0,
+    "spriteName": "decor_20_blood_diamond_cluster"
+  },
+  {
+    "index": 42,
+    "id": "decor_21_molten_gold_chalice",
+    "name": "Cálice de Ouro Derretido",
+    "tier": "oculto",
+    "price": 0,
+    "sellPrice": 0,
+    "spriteName": "decor_21_molten_gold_chalice"
+  },
+  {
+    "index": 43,
+    "id": "decor_22_marble_gold_tombstone",
+    "name": "Lápide de Mármore e Ouro",
+    "tier": "oculto",
+    "price": 0,
+    "sellPrice": 0,
+    "spriteName": "decor_22_marble_gold_tombstone"
+  },
+  {
+    "index": 44,
+    "id": "decor_23_sapphire_fire_lantern",
+    "name": "Lampião de Fogo de Safira",
+    "tier": "oculto",
+    "price": 0,
+    "sellPrice": 0,
+    "spriteName": "decor_23_sapphire_fire_lantern"
+  },
+  {
+    "index": 45,
+    "id": "decor_24_solid_gold_gargoyle",
+    "name": "Gárgula de Ouro Maciço",
+    "tier": "oculto",
+    "price": 0,
+    "sellPrice": 0,
+    "spriteName": "decor_24_solid_gold_gargoyle"
+  },
+  {
+    "index": 46,
+    "id": "decor_25_imprisoned_crystal_moon",
+    "name": "Lua de Cristal Aprisionada",
+    "tier": "oculto",
+    "price": 0,
+    "sellPrice": 0,
+    "spriteName": "decor_25_imprisoned_crystal_moon"
+  },
+  {
+    "index": 47,
+    "id": "decor_26_platinum_imperial_fountain",
+    "name": "Fonte Imperial de Platina",
+    "tier": "oculto",
+    "price": 0,
+    "sellPrice": 0,
+    "spriteName": "decor_26_platinum_imperial_fountain"
+  },
+  {
+    "index": 48,
+    "id": "decor_27_dark_sun_niflheim",
+    "name": "Sol Obscuro de Niflheim",
+    "tier": "oculto",
+    "price": 0,
+    "sellPrice": 0,
+    "spriteName": "decor_27_dark_sun_niflheim"
+  }
+]

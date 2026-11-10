@@ -1,0 +1,9 @@
+{
+  "dailyBag": {
+    "minPercent": 0.2,
+    "maxPercent": 0.4,
+    "floorMin": 150,
+    "floorMax": 300,
+    "cap": 6000
+  }
+}
