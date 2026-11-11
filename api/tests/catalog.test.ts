@@ -26,6 +26,13 @@ describe('Catalog - Items & Bag Pool', () => {
     expect(decor?.index).toBe(13);
   });
 
+  it('should find decoration by public id when it differs from the internal key', () => {
+    const decor = findDecoration('decor_30_fallen_angel_statues');
+    expect(decor).toBeDefined();
+    expect(decor?.index).toBe(30);
+    expect(decor?.spriteName).toBe('decor_18_fallen_angel_statues');
+  });
+
   it('should return bag pools with configured plants', () => {
     const commonPool = getBagPool('common');
     expect(commonPool.length).toBeGreaterThan(0);
