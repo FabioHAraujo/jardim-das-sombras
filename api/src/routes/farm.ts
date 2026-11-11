@@ -46,14 +46,20 @@ export const farmRoutes: FastifyPluginAsync = async (fastify) => {
       .send(fs.createReadStream(filePath));
   }
 
+  // Assets estáticos (sprites, fundos, ícones) ficam fora do rate limit global:
+  // uma única carga do painel dispara dezenas de requisições de imagem, o que
+  // estourava o limite de 120 req/min após 2–3 recarregamentos e quebrava os sprites com 429.
+  // Os arquivos são servidos com Cache-Control immutable e nomes validados por regex.
+  const staticRouteOpts = { config: { rateLimit: false } } as const;
+
   // GET /favicon.svg
-  fastify.get('/favicon.svg', async (_req, reply) => {
+  fastify.get('/favicon.svg', staticRouteOpts, async (_req, reply) => {
     reply.header('Content-Type', 'image/svg+xml');
     reply.header('Cache-Control', 'public, max-age=86400');
     return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">🥀</text></svg>`;
   });
 
-  fastify.get('/favicon.ico', async (_req, reply) => {
+  fastify.get('/favicon.ico', staticRouteOpts, async (_req, reply) => {
     return reply.redirect('/favicon.svg', 302);
   });
 
@@ -170,7 +176,7 @@ export const farmRoutes: FastifyPluginAsync = async (fastify) => {
               tooltipText = `[${s.slotIndex}] ${t('tooltips.ready')}${timeStr}`;
             } else if (s.stage === 'seed' || s.stage === 'growing') {
               const timeStr = s.remainingSecondsToHarvest ? formatConciseTime(s.remainingSecondsToHarvest) : '...';
-              const witherStr = plantDef?.witherTimeSeconds ? ` | 💀 ${formatConciseTime(plantDef.witherTimeSeconds)}` : '';
+              const witherStr = plantDef?.witherTimeSeconds ? ` | ☠ ${formatConciseTime(plantDef.witherTimeSeconds)}` : '';
               tooltipText = `[${s.slotIndex}] ${t('tooltips.' + s.stage, { time: timeStr })}${witherStr}`;
             } else if (s.stage === 'withered') {
               tooltipText = `[${s.slotIndex}] ${t('tooltips.withered')}`;
@@ -307,7 +313,7 @@ export const farmRoutes: FastifyPluginAsync = async (fastify) => {
               tooltipText = `[${s.slotIndex}] ${t('tooltips.ready')}${timeStr}`;
             } else if (s.stage === 'seed' || s.stage === 'growing') {
               const timeStr = s.remainingSecondsToHarvest ? formatConciseTime(s.remainingSecondsToHarvest) : '...';
-              const witherStr = plantDef?.witherTimeSeconds ? ` | 💀 ${formatConciseTime(plantDef.witherTimeSeconds)}` : '';
+              const witherStr = plantDef?.witherTimeSeconds ? ` | ☠ ${formatConciseTime(plantDef.witherTimeSeconds)}` : '';
               tooltipText = `[${s.slotIndex}] ${t('tooltips.' + s.stage, { time: timeStr })}${witherStr}`;
             } else if (s.stage === 'withered') {
               tooltipText = `[${s.slotIndex}] ${t('tooltips.withered')}`;
@@ -360,7 +366,7 @@ export const farmRoutes: FastifyPluginAsync = async (fastify) => {
   );
 
   // Service Worker para notificações nativas e push no navegador
-  fastify.get('/sw.js', async (req, reply) => {
+  fastify.get('/sw.js', staticRouteOpts, async (req, reply) => {
     reply.type('application/javascript').header('Cache-Control', 'no-cache').send(`
       self.addEventListener('install', (event) => {
         self.skipWaiting();
@@ -582,19 +588,19 @@ export const farmRoutes: FastifyPluginAsync = async (fastify) => {
   });
 
   // Servir assets estáticos de forma assíncrona, com streaming e proteção contra path traversal
-  fastify.get<{ Params: { filename: string } }>('/farm/bg/:filename', async (req, reply) => {
+  fastify.get<{ Params: { filename: string } }>('/farm/bg/:filename', staticRouteOpts, async (req, reply) => {
     return streamStaticAsset(reply, 'backgrounds', req.params.filename);
   });
 
-  fastify.get<{ Params: { filename: string } }>('/farm/sprites/plants/:filename', async (req, reply) => {
+  fastify.get<{ Params: { filename: string } }>('/farm/sprites/plants/:filename', staticRouteOpts, async (req, reply) => {
     return streamStaticAsset(reply, path.join('sprites', 'plants'), req.params.filename);
   });
 
-  fastify.get<{ Params: { filename: string } }>('/farm/sprites/decorations/:filename', async (req, reply) => {
+  fastify.get<{ Params: { filename: string } }>('/farm/sprites/decorations/:filename', staticRouteOpts, async (req, reply) => {
     return streamStaticAsset(reply, path.join('sprites', 'decorations'), req.params.filename);
   });
 
-  fastify.get<{ Params: { filename: string } }>('/farm/sprites/consumables/:filename', async (req, reply) => {
+  fastify.get<{ Params: { filename: string } }>('/farm/sprites/consumables/:filename', staticRouteOpts, async (req, reply) => {
     return streamStaticAsset(reply, path.join('sprites', 'consumables'), req.params.filename);
   });
 

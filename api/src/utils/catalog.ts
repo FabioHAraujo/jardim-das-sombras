@@ -121,8 +121,11 @@ export function findDecoration(query: string | number): DecorationDefinition | u
   for (const [key, decor] of Object.entries(DECORATIONS)) {
     const keyNorm = normalizeStr(key);
     const nameNorm = normalizeStr(decor.name);
+    // O id público (ex.: decor_30_fallen_angel_statues) pode diferir da key interna
+    // (decor_18_fallen_angel_statues); ambos precisam resolver para o mesmo enfeite.
+    const idNorm = normalizeStr(decor.id);
 
-    if (keyNorm === qNorm || nameNorm === qNorm) return decor;
+    if (keyNorm === qNorm || idNorm === qNorm || nameNorm === qNorm) return decor;
     if (keyNorm.includes(qNorm) || nameNorm.includes(qNorm)) return decor;
   }
   return undefined;

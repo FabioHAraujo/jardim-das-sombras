@@ -67,6 +67,15 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
     };
   }
 
+  // Mapa id/key -> spriteName das decorações. Alguns itens têm id diferente do arquivo
+  // de sprite (ex.: decor_30_fallen_angel_statues usa decor_18_fallen_angel_statues.png),
+  // então o front não pode montar a URL apenas a partir do id.
+  const decorSpriteMap: Record<string, string> = {};
+  for (const [key, d] of Object.entries(DECORATIONS)) {
+    decorSpriteMap[key] = d.spriteName;
+    decorSpriteMap[d.id] = d.spriteName;
+  }
+
   const hasActiveBuffs = buffs.hasActiveBonus;
   let bonusParts: string[] = [];
   if (buffs.effectiveGrowthMultiplier !== 1.0) {
@@ -99,6 +108,17 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Metamorphous&family=MedievalSharp&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /*
+     * Tamanho da fazenda guiado pela altura da viewport: no desktop o canvas
+     * (quadrado) deve caber inteiro acima da dobra junto com o cabeçalho,
+     * os botões rápidos e o banner de bônus. --chrome-h é a soma dessas
+     * alturas + paddings; é reduzido em telas baixas (ex.: HD 1280x720).
+     */
+    :root {
+      --chrome-h: 236px;
+      --farm-size: clamp(460px, calc(100dvh - var(--chrome-h)), 900px);
+    }
     
     body {
       background: radial-gradient(circle at center, #140d21 0%, #0a0612 60%, #040207 100%);
@@ -198,6 +218,8 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
       border-color: #7a3a2d;
     }
     .stat-pill.notif-btn {
+      font-family: inherit;
+      background: #100a1c;
       cursor: pointer;
       user-select: none;
       color: #a894b5;
@@ -256,6 +278,8 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
       justify-content: center;
       align-items: flex-start;
     }
+    /* Remove a dupla margem (inline margin + gap) acima do canvas */
+    .top-actions-bar { margin-bottom: 0; }
 
     /* Left: Interactive Canvas */
     .canvas-column {
@@ -264,8 +288,9 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
       flex-direction: column;
       align-items: center;
       gap: 0.75rem;
-      flex: 1;
-      max-width: 680px;
+      flex: 0 0 auto;
+      width: var(--farm-size);
+      max-width: calc(100% - 400px - 1.75rem);
     }
     .farm-canvas-wrapper {
       position: relative;
@@ -313,9 +338,10 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
       background: rgba(12, 10, 18, 0.94);
       color: #dfd7cc;
       border: 1px solid #4a2e6e;
-      font-size: 11px;
+      /* Escala com o canvas (container query) para não sobrepor em telas pequenas */
+      font-size: clamp(9px, 2.1cqw, 11px);
       font-weight: bold;
-      padding: 2px 7px;
+      padding: 2px clamp(4px, 1cqw, 7px);
       border-radius: 12px;
       margin-bottom: 3px;
       white-space: nowrap;
@@ -506,8 +532,8 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
 
     /* Right: Management Sidebar */
     .sidebar-column {
-      flex: 1;
-      max-width: 580px;
+      flex: 1 1 0;
+      min-width: 380px;
       background: #130d20;
       border: 1px solid #4a2d6e;
       border-radius: 16px;
@@ -515,9 +541,20 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      min-height: 680px;
-      height: 742px;
-      max-height: 742px;
+      /* Altura inicial aproximada; syncSidebarHeight() iguala à coluna da fazenda */
+      height: calc(var(--farm-size) + 120px);
+    }
+
+    /* Telas desktop baixas (HD 1280x720, notebooks): cabeçalho e botões mais compactos */
+    @media (min-width: 1101px) and (max-height: 860px) {
+      :root { --chrome-h: 196px; }
+      body { padding: 0.75rem 1rem; }
+      .top-header { padding: 0.55rem 1.25rem; margin-bottom: 0.75rem; }
+      .top-header .brand h1 { font-size: 1.25rem; }
+      .btn-quick { padding: 0.5rem 1rem; }
+      .canvas-column { gap: 0.6rem; }
+      .farm-buff-banner { padding: 0.45rem 1rem; }
+      .tab-btn { padding: 0.75rem 0.5rem; }
     }
 
     /* Sidebar Tabs */
@@ -960,8 +997,10 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
 
     /* Toast Notification (Top of canvas-column) */
     .toast {
-      position: absolute;
-      top: 1rem;
+      /* Fixo na viewport: antes era absoluto no topo da coluna da fazenda e
+         ficava fora da tela quando o jogador comprava/vendia rolado na sidebar. */
+      position: fixed;
+      top: max(1rem, env(safe-area-inset-top));
       left: 50%;
       transform: translateX(-50%) translateY(-25px);
       background: rgba(18, 12, 28, 0.96);
@@ -1119,6 +1158,7 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
       cursor: not-allowed;
       filter: grayscale(60%);
     }
+    .btn-quick .label-short { display: none; }
     .btn-quick.view-public {
       background: linear-gradient(135deg, #341c5c 0%, #522791 100%);
       color: #ffea99;
@@ -1149,14 +1189,27 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
       .canvas-column, .sidebar-column {
         max-width: 100%;
         width: 100%;
+        min-width: 0;
       }
       .sidebar-column {
         height: auto !important;
         max-height: none !important;
         min-height: auto;
+        /* clip (e não hidden) preserva as bordas arredondadas sem criar um
+           contêiner de rolagem, permitindo que as abas fiquem "sticky". */
+        overflow: clip;
       }
+      /* Sem rolagem aninhada no mobile/tablet: a lista rola com a página e as
+         abas ficam presas no topo, sempre ao alcance do polegar. */
       .tab-content {
-        max-height: 600px;
+        max-height: none;
+        overflow: visible;
+      }
+      .tab-nav {
+        position: sticky;
+        top: 0;
+        z-index: 40;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.55);
       }
     }
 
@@ -1197,6 +1250,28 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
         grid-template-columns: repeat(auto-fill, minmax(135px, 1fr)) !important;
         gap: 0.5rem !important;
       }
+      .top-header .brand h1 {
+        line-height: 1.2;
+      }
+      /* Cards estreitos: nome do item quebra em até 3 linhas em vez de virar "Erva…" */
+      .item-name {
+        white-space: normal;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        line-height: 1.25;
+      }
+      .item-thumb {
+        width: 40px;
+        height: 40px;
+      }
+      .item-card-header {
+        align-items: flex-start;
+      }
+      .section-title {
+        flex-wrap: wrap;
+        gap: 0.15rem 0.5rem;
+      }
       .item-card {
         padding: 0.6rem !important;
       }
@@ -1211,14 +1286,137 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
         font-size: 0.92rem !important;
       }
     }
+
+    /*
+     * Mobile em paisagem (ex.: iPhone 844x390): antes o cabeçalho + botões
+     * ocupavam toda a altura visível e o canvas de ~700px exigia rolar várias
+     * telas. Agora: duas colunas, fazenda "sticky" do tamanho da altura útil
+     * à esquerda e a sidebar rolando com a página à direita.
+     */
+    @media (max-width: 1100px) and (orientation: landscape) and (max-height: 560px) {
+      :root {
+        --landscape-actions-h: 34px;
+        --landscape-banner-h: 28px;
+        --farm-size: min(calc(100dvh - 0.8rem - var(--landscape-actions-h) - var(--landscape-banner-h) - 0.8rem), 56vw);
+      }
+      /* Sem bônus ativo o banner some e a fazenda ganha essa altura */
+      :root:has(#farm-buff-banner[style*="none"]) {
+        --farm-size: min(calc(100dvh - 0.8rem - var(--landscape-actions-h) - 0.4rem), 56vw);
+      }
+      /* Grid na página: fazenda ocupa a coluna esquerda inteira (altura total)
+         e o cabeçalho vai para o topo da coluna direita, acima da sidebar. */
+      body {
+        display: grid;
+        grid-template-columns: var(--farm-size) minmax(0, 1fr);
+        column-gap: 0.6rem;
+        align-items: start;
+        padding: 0.4rem 0.6rem;
+      }
+      .dashboard { display: contents; }
+      .top-header {
+        grid-column: 2;
+        grid-row: 1;
+        width: auto;
+        max-width: none;
+        flex-wrap: nowrap;
+        padding: 0.3rem 0.6rem;
+        margin-bottom: 0.4rem;
+        gap: 0.5rem;
+      }
+      .btn-quick .label-long { display: none; }
+      .btn-quick .label-short { display: inline; }
+      .top-header .brand { min-width: 0; gap: 0.35rem; }
+      .top-header .brand h1 {
+        font-size: 1rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        min-width: 0;
+      }
+      .top-header .badge-admin, #notif-label { display: none; }
+      .header-stats { flex-wrap: nowrap; gap: 0.35rem; flex-shrink: 0; }
+      .stat-pill, .btn-logout { padding: 0.25rem 0.55rem; font-size: 0.75rem; }
+      .canvas-column {
+        grid-column: 1;
+        grid-row: 1 / span 2;
+        position: sticky;
+        top: 0.4rem;
+        flex: 0 0 auto;
+        width: var(--farm-size);
+        max-width: var(--farm-size);
+        gap: 0.4rem;
+      }
+      .quick-actions-bar { gap: 0.4rem; margin-top: 0; }
+      .btn-quick {
+        height: var(--landscape-actions-h);
+        padding: 0 0.4rem;
+        font-size: 0.7rem;
+        border-radius: 8px;
+        white-space: nowrap;
+        overflow: hidden;
+      }
+      .farm-buff-banner {
+        height: var(--landscape-banner-h);
+        padding: 0 0.5rem;
+        font-size: 0.7rem;
+        border-radius: 8px;
+        white-space: nowrap;
+        overflow: hidden;
+      }
+      .sidebar-column {
+        grid-column: 2;
+        grid-row: 2;
+        width: auto;
+        min-width: 0;
+      }
+      .tab-nav { top: 0; }
+      .tab-btn { padding: 0.5rem 0.25rem !important; font-size: 0.78rem !important; }
+      .tab-content { padding: 0.75rem; }
+      .items-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)) !important;
+        gap: 0.5rem !important;
+      }
+      .item-name {
+        white-space: normal;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        line-height: 1.25;
+      }
+    }
+
+    /* Alvos de toque mínimos em telas sensíveis ao toque (~40px) */
+    @media (pointer: coarse) {
+      .btn-subaction { min-height: 40px; }
+      .btn-action, .btn-add-cart { min-height: 38px; }
+      .tab-btn { min-height: 44px; }
+      .btn-cart-minus { width: 32px; height: 32px; }
+      .decor-pin .btn-remove-decor { width: 24px; height: 24px; line-height: 24px; font-size: 13px; }
+      .stat-pill.notif-btn, .btn-logout { min-height: 34px; }
+      #btn-edit-farm-name { min-width: 36px; min-height: 36px; }
+    }
+    /* Acessibilidade: foco visível para navegação por teclado */
+    :focus-visible {
+      outline: 2px solid #ffd978;
+      outline-offset: 2px;
+    }
+    /* Respeita a preferência do sistema por menos movimento */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
   </style>
 </head>
 <body>
   <!-- Top Navigation Header -->
   <header class="top-header">
     <div class="brand">
-      <h1>${t('gameEmoji')} Jardim Lutuoso<span id="header-farm-name">${status.farmName ? ` - ${escapeHtml(status.farmName)}` : ''}</span></h1>
-      <button class="btn-edit-farm-name" id="btn-edit-farm-name" onclick="openFarmNameModal()" title="Editar nome do jardim" style="background:transparent; border:none; cursor:pointer; font-size:1.1rem; margin-left:6px;">✏️</button>
+      <h1>${t('gameEmoji')} ${t('gameName')}<span id="header-farm-name">${status.farmName ? ` - ${escapeHtml(status.farmName)}` : ''}</span></h1>
+      <button class="btn-edit-farm-name" id="btn-edit-farm-name" onclick="openFarmNameModal()" title="Editar nome do jardim" aria-label="Editar nome do jardim" style="background:transparent; border:none; cursor:pointer; font-size:1.1rem; margin-left:6px;">✏️</button>
       <span class="badge-admin">Admin</span>
     </div>
     <div class="header-stats">
@@ -1228,10 +1426,10 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
       <div class="stat-pill save-status" id="val-save-status" style="display:none;" title="Status de salvamento">
         ● Salvo
       </div>
-      <div class="stat-pill notif-btn" id="btn-toggle-notifs" onclick="toggleNotifs()" title="Notificações do Jardim">
+      <button type="button" class="stat-pill notif-btn" id="btn-toggle-notifs" onclick="toggleNotifs()" title="Notificações do Jardim" aria-label="Ativar ou desativar alertas do jardim">
         <span id="notif-icon">🔔</span> <span id="notif-label">Alertas</span>
-      </div>
-      <button class="btn-logout" id="btn-logout" onclick="logoutFarm()" title="Sair da sessão administrativa">
+      </button>
+      <button type="button" class="btn-logout" id="btn-logout" onclick="logoutFarm()" title="Sair da sessão administrativa">
         🚪 Sair
       </button>
     </div>
@@ -1245,12 +1443,12 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
       <div class="toast" id="toast"></div>
 
       <!-- Quick Action Buttons on TOP of Canvas -->
-      <div class="quick-actions-bar top-actions-bar" style="margin-bottom: 10px;">
+      <div class="quick-actions-bar top-actions-bar">
         <button class="btn-quick harvest-all" id="btn-harvest-all" onclick="harvestAllFromCanvas()" title="Colhe todos os canteiros prontos de uma só vez">
-          🌾 Colher Tudo (<span id="ready-slots-count">0</span>)
+          <span>🌾 Colher Tudo (<span id="ready-slots-count">0</span>)</span>
         </button>
         <a class="btn-quick view-public" id="btn-view-public" href="/farm?id=${status.uuid}&public=1" target="_blank" title="Ver como as outras pessoas vêem o seu jardim">
-          👁️ Ver Meu Jardim Público
+          👁️ <span class="label-long">Ver Meu Jardim Público</span><span class="label-short">Ver Público</span>
         </a>
       </div>
 
@@ -1316,7 +1514,7 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
         </h3>
         <!-- Barra de Pesquisa Greedy (Item 3) -->
         <div class="shop-search-bar">
-          <input type="text" id="shop-search-input" placeholder="🔍 Filtrar loja por nome, efeito, descrição, id..." oninput="handleShopSearch()" autocomplete="off" />
+          <input type="search" id="shop-search-input" aria-label="Filtrar itens da loja" placeholder="🔍 Filtrar loja por nome, efeito, descrição, id..." oninput="handleShopSearch()" autocomplete="off" />
         </div>
         <!-- Carrinho de Compras (Item 7) -->
         <div class="cart-container" id="shop-cart-container" style="display:none;"></div>
@@ -1525,6 +1723,10 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
     }
     const SLOT_COORDS = ${JSON.stringify(slotCoordinates)};
     const PLANTS_INFO = ${JSON.stringify(plantCatalogMini)};
+    const DECOR_SPRITES = ${JSON.stringify(decorSpriteMap)};
+    function decorSpriteUrl(decorId) {
+      return '/farm/sprites/decorations/' + (DECOR_SPRITES[decorId] || decorId) + '.png';
+    }
 
     let currentCoins = ${status.coins};
     let currentSlots = ${JSON.stringify(status.slots)};
@@ -1832,7 +2034,7 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
             <span>\${decor.name}</span>
             <button class="btn-remove-decor" data-slot="\${decor.slotIndex}" title="Guardar na mochila">×</button>
           </div>
-          <img src="/farm/sprites/decorations/\${decor.decorId}.png" />
+          <img src="\${decorSpriteUrl(decor.decorId)}" />
         \`;
 
         // Start drag listeners
@@ -2167,7 +2369,7 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
         html += \`
           <div class="item-card decor-placed">
             <div class="item-card-header">
-              <img class="item-thumb" src="/farm/sprites/decorations/\${d.decorId}.png" />
+              <img class="item-thumb" src="\${decorSpriteUrl(d.decorId)}" />
               <div class="item-info">
                 <div class="item-name">\${d.name}</div>
                 <div class="item-sub" style="color:#ffd978;">📍 No Terreno</div>
@@ -2188,7 +2390,7 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
           html += \`
             <div class="item-card decor-unplaced">
               <div class="item-card-header">
-                <img class="item-thumb" src="/farm/sprites/decorations/\${it.itemId}.png" />
+                <img class="item-thumb" src="\${decorSpriteUrl(it.itemId)}" />
                 <div class="item-info">
                   <div class="item-name">\${it.name}</div>
                   <div class="item-sub" style="color:#dfb2ff;">🎒 Livre na Mochila (\${availableToPlace} disp. / total \${it.quantity})</div>
@@ -2727,7 +2929,7 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
         const thumbSrc = itemType === 'seed'
           ? '/farm/sprites/plants/' + it.id + '_ready.png'
           : (itemType === 'decor'
-            ? '/farm/sprites/decorations/' + it.id + '.png'
+            ? decorSpriteUrl(it.id)
             : '/farm/sprites/consumables/' + it.spriteName + '.png');
 
         const ownedBadgeHtml = owned > 0
@@ -3162,6 +3364,13 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
         const targetId = btn.getAttribute('data-tab');
         const targetContent = document.getElementById(targetId);
         if (targetContent) targetContent.classList.add('active');
+
+        // Layouts de página única (mobile/tablet): se o jogador trocou de aba com a
+        // lista rolada, leva ao início do novo conteúdo em vez de deixá-lo no meio.
+        const sidebar = document.querySelector('.sidebar-column');
+        if (window.innerWidth <= 1100 && sidebar && sidebar.getBoundingClientRect().top < 0) {
+          sidebar.scrollIntoView({ block: 'start' });
+        }
       });
     });
 

@@ -253,7 +253,7 @@ export class FarmService {
       decorations: player.decorations.map((d) => ({
         slotIndex: d.slotIndex,
         decorId: d.decorId,
-        name: DECORATIONS[d.decorId]?.name || d.decorId,
+        name: (DECORATIONS[d.decorId] || findDecoration(d.decorId))?.name || d.decorId,
         x: d.x,
         y: d.y,
       })),
