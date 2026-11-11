@@ -112,21 +112,26 @@ export const adminRoutes: FastifyPluginAsync = async (fastify) => {
     }
   );
 
-  // POST /admin/transfer (Transferir itens entre usuários atomicamente)
+  // POST /admin/transfer (Transferir itens e/ou petalitas entre usuários atomicamente)
   fastify.post<{
     Body: {
       fromUserId: string;
       toUserId: string;
-      items: Array<{ itemId: string; amount: number }>;
+      items?: Array<{ itemId: string; amount: number }>;
+      coins?: number;
     };
   }>(
     '/admin/transfer',
     { preHandler: [requireBotApiKey] },
     async (req, reply) => {
-      const { fromUserId, toUserId, items } = req.body;
+      const { fromUserId, toUserId, items = [], coins = 0 } = req.body;
 
-      if (!fromUserId || !toUserId || !items || !Array.isArray(items) || items.length === 0) {
-        throw new DomainError('fromUserId, toUserId e items são obrigatórios', 'INVALID_PAYLOAD', 400);
+      const hasItems = Array.isArray(items) && items.length > 0;
+      const coinAmount = Number(coins) || 0;
+      const hasCoins = coinAmount > 0;
+
+      if (!fromUserId || !toUserId || (!hasItems && !hasCoins)) {
+        throw new DomainError('fromUserId, toUserId e ao menos um item ou quantia de petalitas são obrigatórios', 'INVALID_PAYLOAD', 400);
       }
 
       const result = await fastify.prisma.$transaction(async (tx) => {
@@ -147,61 +152,90 @@ export const adminRoutes: FastifyPluginAsync = async (fastify) => {
           });
         }
 
-        // 1. Validação de todos os itens do remetente
-        for (const it of items) {
-          const realId = resolveRealItemId(it.itemId);
-
-          const inv = await tx.inventory.findUnique({
-            where: { playerId_itemId: { playerId: fromUserId, itemId: realId } },
-          });
-
-          const requiredAmount = Number(it.amount) || 1;
-          if (!inv || inv.quantity < requiredAmount) {
+        // 1. Validação e transferência de Petalitas (coins)
+        let coinsTransferred = 0;
+        if (hasCoins) {
+          const sender = await tx.player.findUnique({ where: { id: fromUserId } });
+          if (!sender || sender.coins < coinAmount) {
             throw new DomainError(
-              `Item ${it.itemId} insuficiente para ${fromUserId}. Possui: ${inv?.quantity || 0}, Requerido: ${requiredAmount}`,
-              'INSUFFICIENT_ITEMS',
+              `Petalitas insuficientes para ${fromUserId}. Possui: ${sender?.coins || 0}, Requerido: ${coinAmount}`,
+              'INSUFFICIENT_COINS',
               400
             );
           }
-        }
 
-        // 2. Transferência atômica
-        const transferred = [];
-        for (const it of items) {
-          const realId = resolveRealItemId(it.itemId);
-          const amount = Number(it.amount) || 1;
-
-          // Subtrai do remetente
-          const updatedSender = await tx.inventory.update({
-            where: { playerId_itemId: { playerId: fromUserId, itemId: realId } },
-            data: { quantity: { decrement: amount } },
+          await tx.player.update({
+            where: { id: fromUserId },
+            data: { coins: { decrement: coinAmount } },
           });
 
-          if (updatedSender.quantity <= 0) {
-            await tx.inventory.delete({
+          await tx.player.update({
+            where: { id: toUserId },
+            data: { coins: { increment: coinAmount } },
+          });
+
+          coinsTransferred = coinAmount;
+        }
+
+        // 2. Validação de todos os itens do remetente
+        if (hasItems) {
+          for (const it of items) {
+            const realId = resolveRealItemId(it.itemId);
+
+            const inv = await tx.inventory.findUnique({
               where: { playerId_itemId: { playerId: fromUserId, itemId: realId } },
             });
+
+            const requiredAmount = Number(it.amount) || 1;
+            if (!inv || inv.quantity < requiredAmount) {
+              throw new DomainError(
+                `Item ${it.itemId} insuficiente para ${fromUserId}. Possui: ${inv?.quantity || 0}, Requerido: ${requiredAmount}`,
+                'INSUFFICIENT_ITEMS',
+                400
+              );
+            }
           }
-
-          // Adiciona ao destinatário
-          const updatedReceiver = await tx.inventory.upsert({
-            where: { playerId_itemId: { playerId: toUserId, itemId: realId } },
-            create: { playerId: toUserId, itemId: realId, quantity: amount },
-            update: { quantity: { increment: amount } },
-          });
-
-          transferred.push({
-            itemId: realId,
-            amount,
-            senderRemaining: Math.max(0, updatedSender.quantity),
-            receiverTotal: updatedReceiver.quantity,
-          });
         }
 
-        return transferred;
+        // 3. Transferência atômica de itens
+        const transferred = [];
+        if (hasItems) {
+          for (const it of items) {
+            const realId = resolveRealItemId(it.itemId);
+            const amount = Number(it.amount) || 1;
+
+            // Subtrai do remetente
+            const updatedSender = await tx.inventory.update({
+              where: { playerId_itemId: { playerId: fromUserId, itemId: realId } },
+              data: { quantity: { decrement: amount } },
+            });
+
+            if (updatedSender.quantity <= 0) {
+              await tx.inventory.delete({
+                where: { playerId_itemId: { playerId: fromUserId, itemId: realId } },
+              });
+            }
+
+            // Adiciona ao destinatário
+            const updatedReceiver = await tx.inventory.upsert({
+              where: { playerId_itemId: { playerId: toUserId, itemId: realId } },
+              create: { playerId: toUserId, itemId: realId, quantity: amount },
+              update: { quantity: { increment: amount } },
+            });
+
+            transferred.push({
+              itemId: realId,
+              amount,
+              senderRemaining: Math.max(0, updatedSender.quantity),
+              receiverTotal: updatedReceiver.quantity,
+            });
+          }
+        }
+
+        return { transferred, coinsTransferred };
       });
 
-      return reply.send({ success: true, transferred: result });
+      return reply.send({ success: true, ...result });
     }
   );
 
