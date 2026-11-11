@@ -215,9 +215,9 @@ export function renderPublicFarmHtml(status: any, uuid: string): string {
       <div class="frame-inner">
         <div class="loader" id="farm-loader">
           <div class="spinner"></div>
-          <span>Carregando Fazenda...</span>
+          <span id="farm-loader-text">Carregando Fazenda...</span>
         </div>
-        <img class="farm-image" id="farm-img" src="${imageUrl}" alt="${t('gameName')}" loading="eager" onload="revealFarm()" />
+        <img class="farm-image" id="farm-img" src="${imageUrl}" alt="${t('gameName')}" loading="eager" />
       </div>
     </div>
 
@@ -249,15 +249,34 @@ export function renderPublicFarmHtml(status: any, uuid: string): string {
       }
     } catch (e) {}
 
+    // O listener é registrado aqui (e não via atributo onload) porque a imagem pode
+    // terminar de carregar antes deste script ser executado, o que gerava
+    // "ReferenceError: revealFarm is not defined".
     function revealFarm() {
       const img = document.getElementById('farm-img');
       const loader = document.getElementById('farm-loader');
       if (img) img.classList.add('loaded');
       if (loader) loader.classList.add('hidden');
     }
+    function showFarmError() {
+      const loader = document.getElementById('farm-loader');
+      const text = document.getElementById('farm-loader-text');
+      const spinner = loader ? loader.querySelector('.spinner') : null;
+      if (spinner) spinner.style.display = 'none';
+      if (text) text.textContent = 'Não foi possível carregar a fazenda. Toque para tentar novamente.';
+      if (loader) {
+        loader.style.cursor = 'pointer';
+        loader.onclick = () => window.location.reload();
+      }
+    }
     const imgEl = document.getElementById('farm-img');
-    if (imgEl && imgEl.complete) {
-      revealFarm();
+    if (imgEl) {
+      imgEl.addEventListener('load', revealFarm);
+      imgEl.addEventListener('error', showFarmError);
+      if (imgEl.complete) {
+        if (imgEl.naturalWidth > 0) revealFarm();
+        else showFarmError();
+      }
     }
   </script>
 </body>
