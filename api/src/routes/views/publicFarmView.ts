@@ -98,7 +98,9 @@ export function renderPublicFarmHtml(status: any, uuid: string): string {
       align-items: center;
       justify-content: center;
       width: 100%;
-      max-width: 760px;
+      /* Cabe na altura da tela junto com título e estatísticas
+         (antes 760px fixos: em HD 1280x720 a página tinha 1031px de altura). */
+      max-width: clamp(300px, calc(100dvh - 272px), 760px);
       aspect-ratio: 1 / 1;
       box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.9);
     }
@@ -201,6 +203,27 @@ export function renderPublicFarmHtml(status: any, uuid: string): string {
       .header .subtitle { font-size: 0.8rem; }
       .stats-bar { gap: 0.5rem; }
       .stat-badge { font-size: 0.85rem; padding: 0.45rem 0.75rem; }
+    }
+    /* Mobile em paisagem: imagem à esquerda ocupando a altura, título e
+       estatísticas à direita (antes a página tinha ~990px num viewport de 342px). */
+    @media (orientation: landscape) and (max-height: 560px) {
+      body { padding: 0.5rem; }
+      .container {
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr);
+        grid-template-rows: auto auto 1fr;
+        column-gap: 1rem;
+        align-items: center;
+        max-width: 100%;
+      }
+      .frame-wrapper { grid-column: 1; grid-row: 1 / span 3; padding: 6px; border-radius: 12px; }
+      .frame-inner { width: calc(100dvh - 1rem - 18px); max-width: none; }
+      .header { grid-column: 2; margin-bottom: 0.5rem; }
+      .header h1 { font-size: 1.4rem; }
+      .header .subtitle { font-size: 0.75rem; }
+      .stats-bar { grid-column: 2; margin-top: 0; gap: 0.5rem; }
+      .stat-badge { font-size: 0.8rem; padding: 0.4rem 0.7rem; }
+      .footer { grid-column: 2; align-self: start; margin-top: 0.75rem; }
     }
   </style>
 </head>
