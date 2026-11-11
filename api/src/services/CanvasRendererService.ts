@@ -288,7 +288,7 @@ export class CanvasRendererService {
           if (slot.isGhost) text = `[${slot.slotIndex}] ✦ ${t('tooltips.harvested', {}, 'Colhido!')}`;
           else if (slot.stage === 'ready') text = `[${slot.slotIndex}] ✦ Pronta`;
           else if (slot.stage === 'seed' || slot.stage === 'growing') text = `[${slot.slotIndex}] ☘ Em cultivo`;
-          else if (slot.stage === 'withered') text = `[${slot.slotIndex}] 💀 Apodrecida`;
+          else if (slot.stage === 'withered') text = `[${slot.slotIndex}] ☠ Apodrecida`;
         }
         if (text) {
           // Dynamic style by stage:

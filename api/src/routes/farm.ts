@@ -176,7 +176,7 @@ export const farmRoutes: FastifyPluginAsync = async (fastify) => {
               tooltipText = `[${s.slotIndex}] ${t('tooltips.ready')}${timeStr}`;
             } else if (s.stage === 'seed' || s.stage === 'growing') {
               const timeStr = s.remainingSecondsToHarvest ? formatConciseTime(s.remainingSecondsToHarvest) : '...';
-              const witherStr = plantDef?.witherTimeSeconds ? ` | 💀 ${formatConciseTime(plantDef.witherTimeSeconds)}` : '';
+              const witherStr = plantDef?.witherTimeSeconds ? ` | ☠ ${formatConciseTime(plantDef.witherTimeSeconds)}` : '';
               tooltipText = `[${s.slotIndex}] ${t('tooltips.' + s.stage, { time: timeStr })}${witherStr}`;
             } else if (s.stage === 'withered') {
               tooltipText = `[${s.slotIndex}] ${t('tooltips.withered')}`;
@@ -313,7 +313,7 @@ export const farmRoutes: FastifyPluginAsync = async (fastify) => {
               tooltipText = `[${s.slotIndex}] ${t('tooltips.ready')}${timeStr}`;
             } else if (s.stage === 'seed' || s.stage === 'growing') {
               const timeStr = s.remainingSecondsToHarvest ? formatConciseTime(s.remainingSecondsToHarvest) : '...';
-              const witherStr = plantDef?.witherTimeSeconds ? ` | 💀 ${formatConciseTime(plantDef.witherTimeSeconds)}` : '';
+              const witherStr = plantDef?.witherTimeSeconds ? ` | ☠ ${formatConciseTime(plantDef.witherTimeSeconds)}` : '';
               tooltipText = `[${s.slotIndex}] ${t('tooltips.' + s.stage, { time: timeStr })}${witherStr}`;
             } else if (s.stage === 'withered') {
               tooltipText = `[${s.slotIndex}] ${t('tooltips.withered')}`;
