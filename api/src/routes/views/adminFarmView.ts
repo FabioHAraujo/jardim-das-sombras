@@ -67,6 +67,15 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
     };
   }
 
+  // Mapa id/key -> spriteName das decorações. Alguns itens têm id diferente do arquivo
+  // de sprite (ex.: decor_30_fallen_angel_statues usa decor_18_fallen_angel_statues.png),
+  // então o front não pode montar a URL apenas a partir do id.
+  const decorSpriteMap: Record<string, string> = {};
+  for (const [key, d] of Object.entries(DECORATIONS)) {
+    decorSpriteMap[key] = d.spriteName;
+    decorSpriteMap[d.id] = d.spriteName;
+  }
+
   const hasActiveBuffs = buffs.hasActiveBonus;
   let bonusParts: string[] = [];
   if (buffs.effectiveGrowthMultiplier !== 1.0) {
@@ -1525,6 +1534,10 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
     }
     const SLOT_COORDS = ${JSON.stringify(slotCoordinates)};
     const PLANTS_INFO = ${JSON.stringify(plantCatalogMini)};
+    const DECOR_SPRITES = ${JSON.stringify(decorSpriteMap)};
+    function decorSpriteUrl(decorId) {
+      return '/farm/sprites/decorations/' + (DECOR_SPRITES[decorId] || decorId) + '.png';
+    }
 
     let currentCoins = ${status.coins};
     let currentSlots = ${JSON.stringify(status.slots)};
@@ -1832,7 +1845,7 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
             <span>\${decor.name}</span>
             <button class="btn-remove-decor" data-slot="\${decor.slotIndex}" title="Guardar na mochila">×</button>
           </div>
-          <img src="/farm/sprites/decorations/\${decor.decorId}.png" />
+          <img src="\${decorSpriteUrl(decor.decorId)}" />
         \`;
 
         // Start drag listeners
@@ -2167,7 +2180,7 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
         html += \`
           <div class="item-card decor-placed">
             <div class="item-card-header">
-              <img class="item-thumb" src="/farm/sprites/decorations/\${d.decorId}.png" />
+              <img class="item-thumb" src="\${decorSpriteUrl(d.decorId)}" />
               <div class="item-info">
                 <div class="item-name">\${d.name}</div>
                 <div class="item-sub" style="color:#ffd978;">📍 No Terreno</div>
@@ -2188,7 +2201,7 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
           html += \`
             <div class="item-card decor-unplaced">
               <div class="item-card-header">
-                <img class="item-thumb" src="/farm/sprites/decorations/\${it.itemId}.png" />
+                <img class="item-thumb" src="\${decorSpriteUrl(it.itemId)}" />
                 <div class="item-info">
                   <div class="item-name">\${it.name}</div>
                   <div class="item-sub" style="color:#dfb2ff;">🎒 Livre na Mochila (\${availableToPlace} disp. / total \${it.quantity})</div>
@@ -2727,7 +2740,7 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
         const thumbSrc = itemType === 'seed'
           ? '/farm/sprites/plants/' + it.id + '_ready.png'
           : (itemType === 'decor'
-            ? '/farm/sprites/decorations/' + it.id + '.png'
+            ? decorSpriteUrl(it.id)
             : '/farm/sprites/consumables/' + it.spriteName + '.png');
 
         const ownedBadgeHtml = owned > 0
