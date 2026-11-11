@@ -1226,7 +1226,7 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
   <!-- Top Navigation Header -->
   <header class="top-header">
     <div class="brand">
-      <h1>${t('gameEmoji')} Jardim Lutuoso<span id="header-farm-name">${status.farmName ? ` - ${escapeHtml(status.farmName)}` : ''}</span></h1>
+      <h1>${t('gameEmoji')} ${t('gameName')}<span id="header-farm-name">${status.farmName ? ` - ${escapeHtml(status.farmName)}` : ''}</span></h1>
       <button class="btn-edit-farm-name" id="btn-edit-farm-name" onclick="openFarmNameModal()" title="Editar nome do jardim" style="background:transparent; border:none; cursor:pointer; font-size:1.1rem; margin-left:6px;">✏️</button>
       <span class="badge-admin">Admin</span>
     </div>
@@ -1256,7 +1256,7 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
       <!-- Quick Action Buttons on TOP of Canvas -->
       <div class="quick-actions-bar top-actions-bar" style="margin-bottom: 10px;">
         <button class="btn-quick harvest-all" id="btn-harvest-all" onclick="harvestAllFromCanvas()" title="Colhe todos os canteiros prontos de uma só vez">
-          🌾 Colher Tudo (<span id="ready-slots-count">0</span>)
+          <span>🌾 Colher Tudo (<span id="ready-slots-count">0</span>)</span>
         </button>
         <a class="btn-quick view-public" id="btn-view-public" href="/farm?id=${status.uuid}&public=1" target="_blank" title="Ver como as outras pessoas vêem o seu jardim">
           👁️ Ver Meu Jardim Público
