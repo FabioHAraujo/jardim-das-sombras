@@ -108,6 +108,17 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Metamorphous&family=MedievalSharp&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /*
+     * Tamanho da fazenda guiado pela altura da viewport: no desktop o canvas
+     * (quadrado) deve caber inteiro acima da dobra junto com o cabeçalho,
+     * os botões rápidos e o banner de bônus. --chrome-h é a soma dessas
+     * alturas + paddings; é reduzido em telas baixas (ex.: HD 1280x720).
+     */
+    :root {
+      --chrome-h: 236px;
+      --farm-size: clamp(460px, calc(100dvh - var(--chrome-h)), 900px);
+    }
     
     body {
       background: radial-gradient(circle at center, #140d21 0%, #0a0612 60%, #040207 100%);
@@ -265,6 +276,8 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
       justify-content: center;
       align-items: flex-start;
     }
+    /* Remove a dupla margem (inline margin + gap) acima do canvas */
+    .top-actions-bar { margin-bottom: 0; }
 
     /* Left: Interactive Canvas */
     .canvas-column {
@@ -273,8 +286,9 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
       flex-direction: column;
       align-items: center;
       gap: 0.75rem;
-      flex: 1;
-      max-width: 680px;
+      flex: 0 0 auto;
+      width: var(--farm-size);
+      max-width: calc(100% - 400px - 1.75rem);
     }
     .farm-canvas-wrapper {
       position: relative;
@@ -515,8 +529,8 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
 
     /* Right: Management Sidebar */
     .sidebar-column {
-      flex: 1;
-      max-width: 580px;
+      flex: 1 1 0;
+      min-width: 380px;
       background: #130d20;
       border: 1px solid #4a2d6e;
       border-radius: 16px;
@@ -524,9 +538,20 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      min-height: 680px;
-      height: 742px;
-      max-height: 742px;
+      /* Altura inicial aproximada; syncSidebarHeight() iguala à coluna da fazenda */
+      height: calc(var(--farm-size) + 120px);
+    }
+
+    /* Telas desktop baixas (HD 1280x720, notebooks): cabeçalho e botões mais compactos */
+    @media (min-width: 1101px) and (max-height: 860px) {
+      :root { --chrome-h: 196px; }
+      body { padding: 0.75rem 1rem; }
+      .top-header { padding: 0.55rem 1.25rem; margin-bottom: 0.75rem; }
+      .top-header .brand h1 { font-size: 1.25rem; }
+      .btn-quick { padding: 0.5rem 1rem; }
+      .canvas-column { gap: 0.6rem; }
+      .farm-buff-banner { padding: 0.45rem 1rem; }
+      .tab-btn { padding: 0.75rem 0.5rem; }
     }
 
     /* Sidebar Tabs */
@@ -1158,6 +1183,7 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
       .canvas-column, .sidebar-column {
         max-width: 100%;
         width: 100%;
+        min-width: 0;
       }
       .sidebar-column {
         height: auto !important;
@@ -1254,7 +1280,7 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
       <div class="toast" id="toast"></div>
 
       <!-- Quick Action Buttons on TOP of Canvas -->
-      <div class="quick-actions-bar top-actions-bar" style="margin-bottom: 10px;">
+      <div class="quick-actions-bar top-actions-bar">
         <button class="btn-quick harvest-all" id="btn-harvest-all" onclick="harvestAllFromCanvas()" title="Colhe todos os canteiros prontos de uma só vez">
           <span>🌾 Colher Tudo (<span id="ready-slots-count">0</span>)</span>
         </button>
