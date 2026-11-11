@@ -336,9 +336,10 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
       background: rgba(12, 10, 18, 0.94);
       color: #dfd7cc;
       border: 1px solid #4a2e6e;
-      font-size: 11px;
+      /* Escala com o canvas (container query) para não sobrepor em telas pequenas */
+      font-size: clamp(9px, 2.1cqw, 11px);
       font-weight: bold;
-      padding: 2px 7px;
+      padding: 2px clamp(4px, 1cqw, 7px);
       border-radius: 12px;
       margin-bottom: 3px;
       white-space: nowrap;
@@ -994,8 +995,10 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
 
     /* Toast Notification (Top of canvas-column) */
     .toast {
-      position: absolute;
-      top: 1rem;
+      /* Fixo na viewport: antes era absoluto no topo da coluna da fazenda e
+         ficava fora da tela quando o jogador comprava/vendia rolado na sidebar. */
+      position: fixed;
+      top: max(1rem, env(safe-area-inset-top));
       left: 50%;
       transform: translateX(-50%) translateY(-25px);
       background: rgba(18, 12, 28, 0.96);
@@ -1153,6 +1156,7 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
       cursor: not-allowed;
       filter: grayscale(60%);
     }
+    .btn-quick .label-short { display: none; }
     .btn-quick.view-public {
       background: linear-gradient(135deg, #341c5c 0%, #522791 100%);
       color: #ffea99;
@@ -1189,9 +1193,21 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
         height: auto !important;
         max-height: none !important;
         min-height: auto;
+        /* clip (e não hidden) preserva as bordas arredondadas sem criar um
+           contêiner de rolagem, permitindo que as abas fiquem "sticky". */
+        overflow: clip;
       }
+      /* Sem rolagem aninhada no mobile/tablet: a lista rola com a página e as
+         abas ficam presas no topo, sempre ao alcance do polegar. */
       .tab-content {
-        max-height: 600px;
+        max-height: none;
+        overflow: visible;
+      }
+      .tab-nav {
+        position: sticky;
+        top: 0;
+        z-index: 40;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.55);
       }
     }
 
@@ -1232,6 +1248,28 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
         grid-template-columns: repeat(auto-fill, minmax(135px, 1fr)) !important;
         gap: 0.5rem !important;
       }
+      .top-header .brand h1 {
+        line-height: 1.2;
+      }
+      /* Cards estreitos: nome do item quebra em até 3 linhas em vez de virar "Erva…" */
+      .item-name {
+        white-space: normal;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        line-height: 1.25;
+      }
+      .item-thumb {
+        width: 40px;
+        height: 40px;
+      }
+      .item-card-header {
+        align-items: flex-start;
+      }
+      .section-title {
+        flex-wrap: wrap;
+        gap: 0.15rem 0.5rem;
+      }
       .item-card {
         padding: 0.6rem !important;
       }
@@ -1245,6 +1283,115 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
       .section-title {
         font-size: 0.92rem !important;
       }
+    }
+
+    /*
+     * Mobile em paisagem (ex.: iPhone 844x390): antes o cabeçalho + botões
+     * ocupavam toda a altura visível e o canvas de ~700px exigia rolar várias
+     * telas. Agora: duas colunas, fazenda "sticky" do tamanho da altura útil
+     * à esquerda e a sidebar rolando com a página à direita.
+     */
+    @media (max-width: 1100px) and (orientation: landscape) and (max-height: 560px) {
+      :root {
+        --landscape-actions-h: 34px;
+        --landscape-banner-h: 28px;
+        --farm-size: min(calc(100dvh - 0.8rem - var(--landscape-actions-h) - var(--landscape-banner-h) - 0.8rem), 56vw);
+      }
+      /* Sem bônus ativo o banner some e a fazenda ganha essa altura */
+      :root:has(#farm-buff-banner[style*="none"]) {
+        --farm-size: min(calc(100dvh - 0.8rem - var(--landscape-actions-h) - 0.4rem), 56vw);
+      }
+      /* Grid na página: fazenda ocupa a coluna esquerda inteira (altura total)
+         e o cabeçalho vai para o topo da coluna direita, acima da sidebar. */
+      body {
+        display: grid;
+        grid-template-columns: var(--farm-size) minmax(0, 1fr);
+        column-gap: 0.6rem;
+        align-items: start;
+        padding: 0.4rem 0.6rem;
+      }
+      .dashboard { display: contents; }
+      .top-header {
+        grid-column: 2;
+        grid-row: 1;
+        width: auto;
+        max-width: none;
+        flex-wrap: nowrap;
+        padding: 0.3rem 0.6rem;
+        margin-bottom: 0.4rem;
+        gap: 0.5rem;
+      }
+      .btn-quick .label-long { display: none; }
+      .btn-quick .label-short { display: inline; }
+      .top-header .brand { min-width: 0; gap: 0.35rem; }
+      .top-header .brand h1 {
+        font-size: 1rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        min-width: 0;
+      }
+      .top-header .badge-admin, #notif-label { display: none; }
+      .header-stats { flex-wrap: nowrap; gap: 0.35rem; flex-shrink: 0; }
+      .stat-pill, .btn-logout { padding: 0.25rem 0.55rem; font-size: 0.75rem; }
+      .canvas-column {
+        grid-column: 1;
+        grid-row: 1 / span 2;
+        position: sticky;
+        top: 0.4rem;
+        flex: 0 0 auto;
+        width: var(--farm-size);
+        max-width: var(--farm-size);
+        gap: 0.4rem;
+      }
+      .quick-actions-bar { gap: 0.4rem; margin-top: 0; }
+      .btn-quick {
+        height: var(--landscape-actions-h);
+        padding: 0 0.4rem;
+        font-size: 0.7rem;
+        border-radius: 8px;
+        white-space: nowrap;
+        overflow: hidden;
+      }
+      .farm-buff-banner {
+        height: var(--landscape-banner-h);
+        padding: 0 0.5rem;
+        font-size: 0.7rem;
+        border-radius: 8px;
+        white-space: nowrap;
+        overflow: hidden;
+      }
+      .sidebar-column {
+        grid-column: 2;
+        grid-row: 2;
+        width: auto;
+        min-width: 0;
+      }
+      .tab-nav { top: 0; }
+      .tab-btn { padding: 0.5rem 0.25rem !important; font-size: 0.78rem !important; }
+      .tab-content { padding: 0.75rem; }
+      .items-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)) !important;
+        gap: 0.5rem !important;
+      }
+      .item-name {
+        white-space: normal;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        line-height: 1.25;
+      }
+    }
+
+    /* Alvos de toque mínimos em telas sensíveis ao toque (~40px) */
+    @media (pointer: coarse) {
+      .btn-subaction { min-height: 40px; }
+      .btn-action, .btn-add-cart { min-height: 38px; }
+      .tab-btn { min-height: 44px; }
+      .btn-cart-minus { width: 32px; height: 32px; }
+      .decor-pin .btn-remove-decor { width: 24px; height: 24px; line-height: 24px; font-size: 13px; }
+      .stat-pill.notif-btn, .btn-logout { min-height: 34px; }
+      #btn-edit-farm-name { min-width: 36px; min-height: 36px; }
     }
   </style>
 </head>
@@ -1285,7 +1432,7 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
           <span>🌾 Colher Tudo (<span id="ready-slots-count">0</span>)</span>
         </button>
         <a class="btn-quick view-public" id="btn-view-public" href="/farm?id=${status.uuid}&public=1" target="_blank" title="Ver como as outras pessoas vêem o seu jardim">
-          👁️ Ver Meu Jardim Público
+          👁️ <span class="label-long">Ver Meu Jardim Público</span><span class="label-short">Ver Público</span>
         </a>
       </div>
 
@@ -3201,6 +3348,13 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
         const targetId = btn.getAttribute('data-tab');
         const targetContent = document.getElementById(targetId);
         if (targetContent) targetContent.classList.add('active');
+
+        // Layouts de página única (mobile/tablet): se o jogador trocou de aba com a
+        // lista rolada, leva ao início do novo conteúdo em vez de deixá-lo no meio.
+        const sidebar = document.querySelector('.sidebar-column');
+        if (window.innerWidth <= 1100 && sidebar && sidebar.getBoundingClientRect().top < 0) {
+          sidebar.scrollIntoView({ block: 'start' });
+        }
       });
     });
 
