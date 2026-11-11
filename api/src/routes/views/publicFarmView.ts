@@ -225,6 +225,20 @@ export function renderPublicFarmHtml(status: any, uuid: string): string {
       .stat-badge { font-size: 0.8rem; padding: 0.4rem 0.7rem; }
       .footer { grid-column: 2; align-self: start; margin-top: 0.75rem; }
     }
+    /* Acessibilidade: foco visível para navegação por teclado */
+    :focus-visible {
+      outline: 2px solid #ffd978;
+      outline-offset: 2px;
+    }
+    /* Respeita a preferência do sistema por menos movimento */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
   </style>
 </head>
 <body>
@@ -236,7 +250,7 @@ export function renderPublicFarmHtml(status: any, uuid: string): string {
 
     <div class="frame-wrapper">
       <div class="frame-inner">
-        <div class="loader" id="farm-loader">
+        <div class="loader" id="farm-loader" role="status" aria-live="polite">
           <div class="spinner"></div>
           <span id="farm-loader-text">Carregando Fazenda...</span>
         </div>

@@ -218,6 +218,8 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
       border-color: #7a3a2d;
     }
     .stat-pill.notif-btn {
+      font-family: inherit;
+      background: #100a1c;
       cursor: pointer;
       user-select: none;
       color: #a894b5;
@@ -1393,6 +1395,20 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
       .stat-pill.notif-btn, .btn-logout { min-height: 34px; }
       #btn-edit-farm-name { min-width: 36px; min-height: 36px; }
     }
+    /* Acessibilidade: foco visível para navegação por teclado */
+    :focus-visible {
+      outline: 2px solid #ffd978;
+      outline-offset: 2px;
+    }
+    /* Respeita a preferência do sistema por menos movimento */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
   </style>
 </head>
 <body>
@@ -1400,7 +1416,7 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
   <header class="top-header">
     <div class="brand">
       <h1>${t('gameEmoji')} ${t('gameName')}<span id="header-farm-name">${status.farmName ? ` - ${escapeHtml(status.farmName)}` : ''}</span></h1>
-      <button class="btn-edit-farm-name" id="btn-edit-farm-name" onclick="openFarmNameModal()" title="Editar nome do jardim" style="background:transparent; border:none; cursor:pointer; font-size:1.1rem; margin-left:6px;">✏️</button>
+      <button class="btn-edit-farm-name" id="btn-edit-farm-name" onclick="openFarmNameModal()" title="Editar nome do jardim" aria-label="Editar nome do jardim" style="background:transparent; border:none; cursor:pointer; font-size:1.1rem; margin-left:6px;">✏️</button>
       <span class="badge-admin">Admin</span>
     </div>
     <div class="header-stats">
@@ -1410,10 +1426,10 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
       <div class="stat-pill save-status" id="val-save-status" style="display:none;" title="Status de salvamento">
         ● Salvo
       </div>
-      <div class="stat-pill notif-btn" id="btn-toggle-notifs" onclick="toggleNotifs()" title="Notificações do Jardim">
+      <button type="button" class="stat-pill notif-btn" id="btn-toggle-notifs" onclick="toggleNotifs()" title="Notificações do Jardim" aria-label="Ativar ou desativar alertas do jardim">
         <span id="notif-icon">🔔</span> <span id="notif-label">Alertas</span>
-      </div>
-      <button class="btn-logout" id="btn-logout" onclick="logoutFarm()" title="Sair da sessão administrativa">
+      </button>
+      <button type="button" class="btn-logout" id="btn-logout" onclick="logoutFarm()" title="Sair da sessão administrativa">
         🚪 Sair
       </button>
     </div>
@@ -1498,7 +1514,7 @@ export function renderAdminFarmHtml(params: AdminViewParams): string {
         </h3>
         <!-- Barra de Pesquisa Greedy (Item 3) -->
         <div class="shop-search-bar">
-          <input type="text" id="shop-search-input" placeholder="🔍 Filtrar loja por nome, efeito, descrição, id..." oninput="handleShopSearch()" autocomplete="off" />
+          <input type="search" id="shop-search-input" aria-label="Filtrar itens da loja" placeholder="🔍 Filtrar loja por nome, efeito, descrição, id..." oninput="handleShopSearch()" autocomplete="off" />
         </div>
         <!-- Carrinho de Compras (Item 7) -->
         <div class="cart-container" id="shop-cart-container" style="display:none;"></div>
